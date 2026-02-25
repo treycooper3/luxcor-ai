@@ -1,6 +1,26 @@
 import CardBeamSection from "./components/CardBeamSection";
+import MatrixBackground from "./components/MatrixBackground";
 
 const CALENDLY_URL = "https://calendly.com/treycooper333/onboarding-meeting";
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
 
 function Nav() {
   return (
@@ -20,16 +40,10 @@ function Nav() {
             Services
           </a>
           <a
-            href="#work"
+            href="#portfolio"
             className="text-sm text-muted transition-colors hover:text-foreground"
           >
-            Work
-          </a>
-          <a
-            href="#about"
-            className="text-sm text-muted transition-colors hover:text-foreground"
-          >
-            About
+            Portfolio
           </a>
           <a
             href={CALENDLY_URL}
@@ -37,7 +51,7 @@ function Nav() {
             rel="noopener noreferrer"
             className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
           >
-            Book a Call
+            Get in Touch
           </a>
         </div>
         <a
@@ -46,7 +60,7 @@ function Nav() {
           rel="noopener noreferrer"
           className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-gold-light md:hidden"
         >
-          Book a Call
+          Get in Touch
         </a>
       </div>
     </nav>
@@ -56,28 +70,29 @@ function Nav() {
 function Hero() {
   return (
     <section className="hero-gradient relative flex min-h-screen items-center justify-center px-6 pt-20">
-      <div className="mx-auto max-w-4xl text-center">
+      <MatrixBackground />
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
         <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
-          Premium AI Solutions
+          AI Solutions for Growing Businesses
         </p>
         <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight md:text-7xl">
-          AI That Works
+          Stop Losing Revenue
           <br />
-          <span className="gold-gradient">As Hard As You Do</span>
+          <span className="gold-gradient">To Manual Workflows</span>
         </h1>
         <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
-          We build custom AI automations, voice agents, and intelligent
-          workflows that eliminate busywork and unlock growth — so you can focus
-          on what matters.
+          Your team is buried in repetitive tasks, missed follow-ups, and
+          unanswered calls. We build custom AI systems that handle the busywork
+          so you can focus on growth.
         </p>
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-gold px-8 py-4 text-base font-semibold text-black transition-all hover:bg-gold-light hover:shadow-[0_0_30px_rgba(212,175,55,0.3)]"
+            className="rounded-full bg-gold px-8 py-4 text-base font-semibold text-black transition-all hover:bg-gold-light hover:shadow-[0_0_30px_rgba(14,165,233,0.3)]"
           >
-            Book Your Free Strategy Call
+            Get in Touch
           </a>
           <a
             href="#services"
@@ -88,16 +103,13 @@ function Hero() {
         </div>
         <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-sm text-muted">
           <div className="flex items-center gap-2">
-            <span className="text-gold">&#10003;</span> Custom-built for your
-            business
+            <CheckIcon className="text-gold" /> Custom-built for your business
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-gold">&#10003;</span> Results in weeks, not
-            months
+            <CheckIcon className="text-gold" /> Results in weeks, not months
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-gold">&#10003;</span> No cookie-cutter
-            templates
+            <CheckIcon className="text-gold" /> Ongoing support included
           </div>
         </div>
       </div>
@@ -105,7 +117,74 @@ function Hero() {
   );
 }
 
+const LightningIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="32"
+    height="32"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+  </svg>
+);
+
+const PhoneIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="32"
+    height="32"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+  </svg>
+);
+
+const GrowthIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="32"
+    height="32"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+    <polyline points="16 7 22 7 22 13" />
+  </svg>
+);
+
 function Problem() {
+  const cards: { icon: React.ReactNode; title: string; desc: string }[] = [
+    {
+      icon: <LightningIcon />,
+      title: "Automate the Repetitive",
+      desc: "We identify workflows eating your team's time and build AI systems that handle them 24/7.",
+    },
+    {
+      icon: <PhoneIcon />,
+      title: "Never Miss a Lead",
+      desc: "AI voice agents and chatbots that answer calls, qualify prospects, and book appointments while you sleep.",
+    },
+    {
+      icon: <GrowthIcon />,
+      title: "Scale Without Hiring",
+      desc: "Custom automations that grow with your business. Do more with less overhead, more margin, more freedom.",
+    },
+  ];
+
   return (
     <section className="px-6 py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -113,33 +192,17 @@ function Problem() {
           The Problem
         </p>
         <h2 className="mb-6 text-3xl font-bold md:text-4xl">
-          Your Team Is Drowning in Manual Work
+          Manual Work Is Costing You Money
         </h2>
         <p className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-muted">
           Missed follow-ups. Hours wasted on repetitive tasks. Phone calls that
           go unanswered. Leads slipping through the cracks. You know AI could
-          fix this — but where do you start?
+          fix this, but where do you start?
         </p>
         <div className="grid gap-6 md:grid-cols-3">
-          {[
-            {
-              icon: "⚡",
-              title: "Automate the Repetitive",
-              desc: "We identify workflows eating your team's time and build AI systems that handle them 24/7.",
-            },
-            {
-              icon: "🎧",
-              title: "Never Miss a Lead",
-              desc: "AI voice agents and chatbots that answer calls, qualify prospects, and book appointments — while you sleep.",
-            },
-            {
-              icon: "🚀",
-              title: "Scale Without Hiring",
-              desc: "Custom automations that grow with your business. Do more with less overhead, more margin, more freedom.",
-            },
-          ].map((item, i) => (
+          {cards.map((item, i) => (
             <div key={i} className="glass-card rounded-2xl p-8 text-left">
-              <div className="mb-4 text-3xl">{item.icon}</div>
+              <div className="mb-4 text-gold">{item.icon}</div>
               <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
               <p className="text-sm leading-relaxed text-muted">{item.desc}</p>
             </div>
@@ -153,47 +216,50 @@ function Problem() {
 const tiers = [
   {
     name: "Starter",
-    price: "$497",
+    price: "$997",
     period: "one-time",
-    description: "Perfect for businesses that know AI is the answer but don't know where to start.",
+    description:
+      "A comprehensive AI audit and strategic roadmap built for serious operators ready to move.",
     features: [
       "Full AI workflow audit",
       "Custom automation roadmap",
       "Prioritized action plan",
       "Recorded Loom walkthrough",
-      "30-minute strategy call",
+      "60-minute strategy call",
     ],
-    cta: "Get Your Roadmap",
+    cta: "Get Started",
     popular: false,
   },
   {
     name: "Growth",
-    price: "$1,500 - $2,500",
-    period: "per project",
-    description: "For businesses ready to build. We design and deploy 1-2 custom automations.",
+    price: "$4,500",
+    period: "per month",
+    description:
+      "Dedicated AI builds, optimization, and support delivered monthly. Your growth engine on retainer.",
     features: [
       "Everything in Starter",
-      "1-2 custom AI automations built",
+      "Monthly AI automation builds",
       "Voice agent or chatbot setup",
-      "Full documentation & training",
-      "30 days post-launch support",
+      "Priority Slack access",
+      "Ongoing optimization & support",
     ],
-    cta: "Start Building",
+    cta: "Apply Now",
     popular: true,
   },
   {
     name: "Enterprise",
-    price: "$3,000 - $5,000",
-    period: "per month",
-    description: "Your dedicated AI partner. Ongoing builds, optimization, and strategic support.",
+    price: "$30,000 - $50,000",
+    period: "per engagement",
+    description:
+      "End-to-end AI transformation for organizations ready to lead their industry.",
     features: [
       "Everything in Growth",
+      "Full-stack AI buildout",
+      "Custom integrations & APIs",
       "Dedicated AI strategist",
-      "Monthly automation builds",
-      "Priority support & SLA",
-      "Quarterly strategy reviews",
+      "White-glove onboarding & QBRs",
     ],
-    cta: "Partner With Us",
+    cta: "Let\u0027s Talk",
     popular: false,
   },
 ];
@@ -207,11 +273,10 @@ function Services() {
             Services
           </p>
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Choose Your Level of AI Transformation
+            Simple Pricing. Serious Results.
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted">
-            From a quick audit to a full AI overhaul — we meet you where you
-            are.
+            From a quick audit to a full AI overhaul. We meet you where you are.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
@@ -219,9 +284,7 @@ function Services() {
             <div
               key={i}
               className={`glass-card relative rounded-2xl p-8 ${
-                tier.popular
-                  ? "popular-glow border-gold/30"
-                  : ""
+                tier.popular ? "popular-glow border-gold/30" : ""
               }`}
             >
               {tier.popular && (
@@ -245,7 +308,9 @@ function Services() {
                     key={j}
                     className="flex items-start gap-2 text-sm text-foreground"
                   >
-                    <span className="mt-0.5 text-gold">&#10003;</span>
+                    <span className="mt-0.5 text-gold">
+                      <CheckIcon />
+                    </span>
                     {feature}
                   </li>
                 ))}
@@ -256,7 +321,7 @@ function Services() {
                 rel="noopener noreferrer"
                 className={`block w-full rounded-full py-3 text-center text-sm font-semibold transition-all ${
                   tier.popular
-                    ? "bg-gold text-black hover:bg-gold-light hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+                    ? "bg-gold text-black hover:bg-gold-light hover:shadow-[0_0_20px_rgba(14,165,233,0.3)]"
                     : "border border-white/20 text-foreground hover:border-white/40 hover:bg-white/5"
                 }`}
               >
@@ -275,7 +340,7 @@ const caseStudies = [
     client: "Financial Aid Network",
     type: "AI Voice Agent",
     problem:
-      "Overwhelmed staff couldn't keep up with inbound calls. Prospective students were waiting on hold or getting voicemail — and going to competitors.",
+      "Overwhelmed staff couldn't keep up with inbound calls. Prospective students were waiting on hold or getting voicemail, then going to competitors.",
     solution:
       "Built an AI voice agent that handles inbound calls 24/7, qualifies leads by asking key questions, and books appointments directly on the team's calendar.",
     result:
@@ -285,7 +350,7 @@ const caseStudies = [
     client: "Clicking with Carissa",
     type: "Website & Digital Presence",
     problem:
-      "A growing photography brand with no professional web presence. Leads came from word-of-mouth only — no way to showcase work, capture inquiries, or book sessions online.",
+      "A growing photography brand with no professional web presence. Leads came from word-of-mouth only, with no way to showcase work, capture inquiries, or book sessions online.",
     solution:
       "Designed and built a full brand website with portfolio gallery, service packages, client testimonials, and an integrated booking/inquiry flow.",
     result:
@@ -295,7 +360,7 @@ const caseStudies = [
     client: "TnD Mechanical",
     type: "Website & Lead Generation",
     problem:
-      "An established HVAC and mechanical contracting business with no online presence. All business came from referrals — missing a massive channel for new customer acquisition.",
+      "An established HVAC and mechanical contracting business with no online presence. All business came from referrals, missing a massive channel for new customer acquisition.",
     solution:
       "Built a professional services website with clear service descriptions, service area coverage, customer reviews, and a streamlined contact/quote request form.",
     result:
@@ -305,18 +370,18 @@ const caseStudies = [
 
 function CaseStudies() {
   return (
-    <section id="work" className="px-6 py-24">
+    <section id="portfolio" className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-16 text-center">
           <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
-            Our Work
+            Portfolio
           </p>
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Real Results for Real Businesses
+            What We&apos;ve Built
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted">
-            We don&apos;t just talk about AI — we build it and ship it. Here&apos;s
-            what we&apos;ve done for our clients.
+            We don&apos;t just talk about AI. We build it and ship it.
+            Here&apos;s what we&apos;ve done for our clients.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
@@ -362,59 +427,6 @@ function CaseStudies() {
   );
 }
 
-function About() {
-  return (
-    <section id="about" className="px-6 py-24">
-      <div className="mx-auto max-w-4xl">
-        <div className="glass-card rounded-2xl p-8 md:p-12">
-          <div className="grid items-center gap-8 md:grid-cols-[1fr_2fr]">
-            <div className="flex h-48 w-48 items-center justify-center rounded-2xl bg-gradient-to-br from-gold/20 to-transparent mx-auto md:mx-0">
-              <span className="text-6xl font-bold gold-gradient">TC</span>
-            </div>
-            <div>
-              <p className="mb-2 text-sm font-medium uppercase tracking-[0.3em] text-gold">
-                The Founder
-              </p>
-              <h2 className="mb-4 text-2xl font-bold md:text-3xl">
-                Trey Cooper
-              </h2>
-              <p className="mb-4 leading-relaxed text-muted">
-                Systems engineer by day, AI builder by obsession. I&apos;ve spent
-                years at the intersection of engineering, automation, and
-                business operations — building everything from AI voice agents
-                to full production pipelines.
-              </p>
-              <p className="mb-6 leading-relaxed text-muted">
-                Luxcor AI was born from a simple belief: every business deserves
-                access to the same AI tools that Fortune 500 companies use. I
-                build custom, not cookie-cutter. Every solution is designed for
-                your specific workflow, your specific pain points, your specific
-                goals.
-              </p>
-              <div className="flex flex-wrap gap-3 text-xs">
-                {[
-                  "Systems Engineering",
-                  "AI & Automation",
-                  "Voice Agents",
-                  "Web Development",
-                  "Business Operations",
-                ].map((skill, i) => (
-                  <span
-                    key={i}
-                    className="rounded-full border border-gold/30 bg-gold/5 px-3 py-1.5 text-gold"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function CTAFooter() {
   return (
     <section className="hero-gradient px-6 py-24">
@@ -423,16 +435,16 @@ function CTAFooter() {
           Ready to Put AI to Work?
         </h2>
         <p className="mb-10 text-lg text-muted">
-          Book a free strategy call. We&apos;ll audit your workflows, identify
-          where AI fits, and give you a clear roadmap — no strings attached.
+          Book a free strategy call. We&apos;ll audit your workflows, show you
+          where AI fits, and give you a clear roadmap. No strings attached.
         </p>
         <a
           href={CALENDLY_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block rounded-full bg-gold px-10 py-4 text-lg font-semibold text-black transition-all hover:bg-gold-light hover:shadow-[0_0_40px_rgba(212,175,55,0.3)]"
+          className="inline-block rounded-full bg-gold px-10 py-4 text-lg font-semibold text-black transition-all hover:bg-gold-light hover:shadow-[0_0_40px_rgba(14,165,233,0.3)]"
         >
-          Book Your Free Strategy Call
+          Get in Touch
         </a>
         <p className="mt-6 text-sm text-muted">
           15 minutes. No pressure. Just clarity on how AI can help your
@@ -457,11 +469,11 @@ function Footer() {
           >
             Services
           </a>
-          <a href="#work" className="transition-colors hover:text-foreground">
-            Work
-          </a>
-          <a href="#about" className="transition-colors hover:text-foreground">
-            About
+          <a
+            href="#portfolio"
+            className="transition-colors hover:text-foreground"
+          >
+            Portfolio
           </a>
           <a
             href={CALENDLY_URL}
@@ -486,7 +498,6 @@ export default function Home() {
       <CardBeamSection />
       <Services />
       <CaseStudies />
-      <About />
       <CTAFooter />
       <Footer />
     </>

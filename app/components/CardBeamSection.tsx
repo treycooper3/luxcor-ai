@@ -734,7 +734,7 @@ export default function CardBeamSection() {
         </h2>
         <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted">
           Most agencies sell you templates and dashboards. We build systems that
-          actually work — custom AI that pays for itself.
+          actually work. Custom AI that pays for itself.
         </p>
       </div>
 
@@ -749,7 +749,7 @@ export default function CardBeamSection() {
       <div className="mx-auto max-w-4xl px-6 text-center mt-12">
         <a
           href="#services"
-          className="inline-block rounded-full border border-gold/30 bg-gold/10 px-8 py-4 text-base font-semibold text-gold transition-all hover:bg-gold/20 hover:shadow-[0_0_30px_rgba(212,175,55,0.2)]"
+          className="inline-block rounded-full border border-gold/30 bg-gold/10 px-8 py-4 text-base font-semibold text-gold transition-all hover:bg-gold/20 hover:shadow-[0_0_30px_rgba(14,165,233,0.2)]"
         >
           See What Real AI Looks Like &rarr;
         </a>
