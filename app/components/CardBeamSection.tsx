@@ -620,11 +620,10 @@ export default function CardBeamSection() {
     const cardLine = cardLineRef.current;
     if (!cardLine) return;
 
-    const startDrag = (e: MouseEvent | Touch) => {
-      if (e instanceof MouseEvent) e.preventDefault();
+    const startDrag = (clientX: number) => {
       s.isDragging = true;
       s.isAnimating = false;
-      s.lastMouseX = "clientX" in e ? e.clientX : 0;
+      s.lastMouseX = clientX;
       s.mouseVelocity = 0;
       const transform = window.getComputedStyle(cardLine).transform;
       if (transform !== "none") {
@@ -633,10 +632,8 @@ export default function CardBeamSection() {
       }
     };
 
-    const onDrag = (e: MouseEvent | Touch) => {
+    const onDrag = (clientX: number) => {
       if (!s.isDragging) return;
-      if (e instanceof MouseEvent) e.preventDefault();
-      const clientX = "clientX" in e ? e.clientX : 0;
       const deltaX = clientX - s.lastMouseX;
       s.position += deltaX;
       s.mouseVelocity = deltaX * 60;
@@ -657,28 +654,23 @@ export default function CardBeamSection() {
       s.isAnimating = true;
     };
 
-    const onMouseDown = (e: MouseEvent) => startDrag(e);
-    const onMouseMove = (e: MouseEvent) => onDrag(e);
+    const onMouseDown = (e: MouseEvent) => { e.preventDefault(); startDrag(e.clientX); };
+    const onMouseMove = (e: MouseEvent) => { if (s.isDragging) { e.preventDefault(); onDrag(e.clientX); } };
     const onMouseUp = () => endDrag();
-    const onTouchStart = (e: TouchEvent) => { e.preventDefault(); startDrag(e.touches[0]); };
-    const onTouchMove = (e: TouchEvent) => { e.preventDefault(); onDrag(e.touches[0]); };
-    const onTouchEnd = () => endDrag();
-    const onWheel = (e: WheelEvent) => {
+    const onTouchStart = (e: TouchEvent) => { startDrag(e.touches[0].clientX); };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!s.isDragging) return;
       e.preventDefault();
-      s.position += e.deltaY > 0 ? 20 : -20;
-      if (s.position < -s.cardLineWidth) s.position = s.containerWidth;
-      else if (s.position > s.containerWidth) s.position = -s.cardLineWidth;
-      cardLine.style.transform = `translateX(${s.position}px)`;
-      updateCardClipping();
+      onDrag(e.touches[0].clientX);
     };
+    const onTouchEnd = () => endDrag();
 
     cardLine.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
-    cardLine.addEventListener("touchstart", onTouchStart, { passive: false });
-    document.addEventListener("touchmove", onTouchMove as EventListener, { passive: false });
+    cardLine.addEventListener("touchstart", onTouchStart, { passive: true });
+    cardLine.addEventListener("touchmove", onTouchMove, { passive: false });
     document.addEventListener("touchend", onTouchEnd);
-    cardLine.addEventListener("wheel", onWheel, { passive: false });
 
     const onResize = () => {
       s.containerWidth = window.innerWidth;
@@ -715,9 +707,8 @@ export default function CardBeamSection() {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
       cardLine.removeEventListener("touchstart", onTouchStart);
-      document.removeEventListener("touchmove", onTouchMove as EventListener);
+      cardLine.removeEventListener("touchmove", onTouchMove);
       document.removeEventListener("touchend", onTouchEnd);
-      cardLine.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
     };
   }, [createCards, animate, initParticleSystem, initScanner, updateCardClipping]);
