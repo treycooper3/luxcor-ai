@@ -75,6 +75,7 @@ class Char {
     this.element.style.textAlign = "center";
     this.element.style.fontFamily =
       '"Helvetica Neue", Helvetica, sans-serif';
+    this.element.style.pointerEvents = "none";
     this.mutate();
   }
 
@@ -133,6 +134,7 @@ class Rain {
     this.element = document.createElement("p");
     this.element.style.lineHeight = "1";
     this.element.style.margin = "0";
+    this.element.style.pointerEvents = "none";
     this.build(row);
     this.drop();
   }
@@ -187,8 +189,9 @@ export default function MatrixBackground() {
     if (!container) return;
 
     const rains: Rain[] = [];
-    const columnCount = 50;
-    const rowCount = 50;
+    const isMobile = window.innerWidth < 768;
+    const columnCount = isMobile ? 20 : 50;
+    const rowCount = isMobile ? 30 : 50;
 
     for (let i = 0; i < columnCount; ++i) {
       const rain = new Rain(rowCount);
@@ -212,11 +215,13 @@ export default function MatrixBackground() {
         inset: 0,
         overflow: "hidden",
         pointerEvents: "none",
+        touchAction: "auto",
         zIndex: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
       }}
+      aria-hidden="true"
     />
   );
 }
