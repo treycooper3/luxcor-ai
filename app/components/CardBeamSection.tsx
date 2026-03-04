@@ -1,10 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import * as THREE from "three";
-
-const CODE_CHARS =
-  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789(){}[]<>;:,._-+=!@#$%^&*|\\/\"'`~?";
 
 const CARD_IMAGES = [
   "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b55e654d1341fb06f8_4.1.png",
@@ -14,13 +10,9 @@ const CARD_IMAGES = [
   "https://cdn.prod.website-files.com/68789c86c8bc802d61932544/689f20b5bea2f1b07392d936_4.png",
 ];
 
-const CARDS_COUNT = 30;
+const CARDS_COUNT = 12;
 
 function generateCode(width: number, height: number): string {
-  const randInt = (min: number, max: number) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
-  const pick = <T,>(arr: T[]): T => arr[randInt(0, arr.length - 1)];
-
   const library = [
     "// compiled preview - scanner demo",
     "const SCAN_WIDTH = 8;",
@@ -50,6 +42,9 @@ function generateCode(width: number, height: number): string {
     "ctx.globalCompositeOperation = 'lighter';",
   ];
 
+  const randInt = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
   for (let i = 0; i < 40; i++) {
     const n1 = randInt(1, 9);
     const n2 = randInt(10, 99);
@@ -59,7 +54,9 @@ function generateCode(width: number, height: number): string {
   let flow = library.join(" ").replace(/\s+/g, " ").trim();
   const totalChars = width * height;
   while (flow.length < totalChars + width) {
-    flow += " " + pick(library).replace(/\s+/g, " ").trim();
+    flow +=
+      " " +
+      library[randInt(0, library.length - 1)].replace(/\s+/g, " ").trim();
   }
 
   let out = "";
@@ -82,11 +79,36 @@ function calculateCodeDimensions(cardWidth: number, cardHeight: number) {
   return { width, height, fontSize, lineHeight };
 }
 
+interface FloatingParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  alpha: number;
+  size: number;
+}
+
+interface ScanParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+  alpha: number;
+  originalAlpha: number;
+  life: number;
+  time: number;
+  decay: number;
+  twinkleSpeed: number;
+  twinkleAmount: number;
+}
+
 export default function CardBeamSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardLineRef = useRef<HTMLDivElement>(null);
-  const particleCanvasRef = useRef<HTMLCanvasElement>(null);
   const scannerCanvasRef = useRef<HTMLCanvasElement>(null);
+  const animFrameRef = useRef<number>(0);
+  const isVisibleRef = useRef(true);
   const stateRef = useRef({
     position: 0,
     velocity: 120,
@@ -100,38 +122,15 @@ export default function CardBeamSection() {
     cardLineWidth: 0,
     scanningActive: false,
   });
-  const animFrameRef = useRef<number>(0);
-  const particleSystemRef = useRef<{
-    renderer: THREE.WebGLRenderer;
-    scene: THREE.Scene;
-    camera: THREE.OrthographicCamera;
-    particles: THREE.Points;
-    velocities: Float32Array;
-    particleCount: number;
-  } | null>(null);
-  const scannerRef = useRef<{
+  const scannerStateRef = useRef<{
     ctx: CanvasRenderingContext2D;
-    particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      alpha: number;
-      originalAlpha: number;
-      life: number;
-      time: number;
-      decay: number;
-      twinkleSpeed: number;
-      twinkleAmount: number;
-    }>;
+    particles: ScanParticle[];
+    floatingParticles: FloatingParticle[];
     w: number;
     h: number;
     lightBarX: number;
     lightBarWidth: number;
     fadeZone: number;
-    intensity: number;
-    maxParticles: number;
     baseIntensity: number;
     baseMaxParticles: number;
     baseFadeZone: number;
@@ -140,14 +139,17 @@ export default function CardBeamSection() {
     currentFadeZone: number;
     currentGlowIntensity: number;
     gradientCanvas: HTMLCanvasElement;
-    animId: number;
+    floatingGradientCanvas: HTMLCanvasElement;
   } | null>(null);
   const asciiIntervalRef = useRef<ReturnType<typeof setInterval>>(null);
 
   const createCards = useCallback(() => {
     const cardLine = cardLineRef.current;
     if (!cardLine) return;
-    cardLine.innerHTML = "";
+    // Clear existing children safely
+    while (cardLine.firstChild) {
+      cardLine.removeChild(cardLine.firstChild);
+    }
 
     for (let i = 0; i < CARDS_COUNT; i++) {
       const wrapper = document.createElement("div");
@@ -161,16 +163,16 @@ export default function CardBeamSection() {
       cardImage.src = CARD_IMAGES[i % CARD_IMAGES.length];
       cardImage.alt = "Card";
       cardImage.onerror = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = 400;
-        canvas.height = 250;
-        const ctx = canvas.getContext("2d")!;
-        const gradient = ctx.createLinearGradient(0, 0, 400, 250);
+        const fallbackCanvas = document.createElement("canvas");
+        fallbackCanvas.width = 400;
+        fallbackCanvas.height = 250;
+        const fallbackCtx = fallbackCanvas.getContext("2d")!;
+        const gradient = fallbackCtx.createLinearGradient(0, 0, 400, 250);
         gradient.addColorStop(0, "#667eea");
         gradient.addColorStop(1, "#764ba2");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 400, 250);
-        cardImage.src = canvas.toDataURL();
+        fallbackCtx.fillStyle = gradient;
+        fallbackCtx.fillRect(0, 0, 400, 250);
+        cardImage.src = fallbackCanvas.toDataURL();
       };
       normalCard.appendChild(cardImage);
 
@@ -178,7 +180,8 @@ export default function CardBeamSection() {
       asciiCard.className = "cb-card cb-card-ascii";
       const asciiContent = document.createElement("div");
       asciiContent.className = "cb-ascii-content";
-      const { width, height, fontSize, lineHeight } = calculateCodeDimensions(400, 250);
+      const { width, height, fontSize, lineHeight } =
+        calculateCodeDimensions(400, 250);
       asciiContent.style.fontSize = fontSize + "px";
       asciiContent.style.lineHeight = lineHeight + "px";
       asciiContent.textContent = generateCode(width, height);
@@ -206,21 +209,29 @@ export default function CardBeamSection() {
       const cardRight = rect.right;
       const cardWidth = rect.width;
 
-      const normalCard = wrapper.querySelector(".cb-card-normal") as HTMLElement;
+      const normalCard = wrapper.querySelector(
+        ".cb-card-normal"
+      ) as HTMLElement;
       const asciiCard = wrapper.querySelector(".cb-card-ascii") as HTMLElement;
       if (!normalCard || !asciiCard) return;
 
       if (cardLeft < scannerRight && cardRight > scannerLeft) {
         anyScanningActive = true;
         const scannerIntersectLeft = Math.max(scannerLeft - cardLeft, 0);
-        const scannerIntersectRight = Math.min(scannerRight - cardLeft, cardWidth);
+        const scannerIntersectRight = Math.min(
+          scannerRight - cardLeft,
+          cardWidth
+        );
         const normalClipRight = (scannerIntersectLeft / cardWidth) * 100;
         const asciiClipLeft = (scannerIntersectRight / cardWidth) * 100;
 
         normalCard.style.setProperty("--clip-right", `${normalClipRight}%`);
         asciiCard.style.setProperty("--clip-left", `${asciiClipLeft}%`);
 
-        if (!wrapper.hasAttribute("data-scanned") && scannerIntersectLeft > 0) {
+        if (
+          !wrapper.hasAttribute("data-scanned") &&
+          scannerIntersectLeft > 0
+        ) {
           wrapper.setAttribute("data-scanned", "true");
           const scanEffect = document.createElement("div");
           scanEffect.className = "cb-scan-effect";
@@ -240,175 +251,60 @@ export default function CardBeamSection() {
     });
 
     stateRef.current.scanningActive = anyScanningActive;
-    if (scannerRef.current) {
-      scannerRef.current.intensity = anyScanningActive ? 1.8 : scannerRef.current.baseIntensity;
-    }
   }, []);
 
-  const animate = useCallback(() => {
-    const s = stateRef.current;
-    const currentTime = performance.now();
-    const deltaTime = (currentTime - s.lastTime) / 1000;
-    s.lastTime = currentTime;
-
-    if (s.isAnimating && !s.isDragging) {
-      if (s.velocity > 30) {
-        s.velocity *= 0.95;
-      } else {
-        s.velocity = Math.max(30, s.velocity);
-      }
-
-      s.position += s.velocity * s.direction * deltaTime;
-
-      if (s.position < -s.cardLineWidth) {
-        s.position = s.containerWidth;
-      } else if (s.position > s.containerWidth) {
-        s.position = -s.cardLineWidth;
-      }
-
-      if (cardLineRef.current) {
-        cardLineRef.current.style.transform = `translateX(${s.position}px)`;
-      }
-      updateCardClipping();
-    }
-
-    animFrameRef.current = requestAnimationFrame(animate);
-  }, [updateCardClipping]);
-
-  // Initialize particle system (Three.js)
-  const initParticleSystem = useCallback(() => {
-    const canvas = particleCanvasRef.current;
-    if (!canvas) return;
-
-    const particleCount = 400;
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(
-      -window.innerWidth / 2, window.innerWidth / 2, 125, -125, 1, 1000
-    );
-    camera.position.z = 100;
-
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, 250);
-    renderer.setClearColor(0x000000, 0);
-
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-    const alphas = new Float32Array(particleCount);
-    const velocities = new Float32Array(particleCount);
-
-    const texCanvas = document.createElement("canvas");
-    texCanvas.width = 100;
-    texCanvas.height = 100;
-    const texCtx = texCanvas.getContext("2d")!;
-    const half = 50;
-    const gradient = texCtx.createRadialGradient(half, half, 0, half, half, half);
-    gradient.addColorStop(0.025, "#fff");
-    gradient.addColorStop(0.1, "hsl(217, 61%, 33%)");
-    gradient.addColorStop(0.25, "hsl(217, 64%, 6%)");
-    gradient.addColorStop(1, "transparent");
-    texCtx.fillStyle = gradient;
-    texCtx.beginPath();
-    texCtx.arc(half, half, half, 0, Math.PI * 2);
-    texCtx.fill();
-    const texture = new THREE.CanvasTexture(texCanvas);
-
-    for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * window.innerWidth * 2;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 250;
-      positions[i * 3 + 2] = 0;
-      colors[i * 3] = 1;
-      colors[i * 3 + 1] = 1;
-      colors[i * 3 + 2] = 1;
-      alphas[i] = (Math.random() * 8 + 2) / 10;
-      velocities[i] = Math.random() * 60 + 30;
-    }
-
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-    geometry.setAttribute("alpha", new THREE.BufferAttribute(alphas, 1));
-
-    const material = new THREE.ShaderMaterial({
-      uniforms: { pointTexture: { value: texture }, size: { value: 15.0 } },
-      vertexShader: `
-        attribute float alpha;
-        varying float vAlpha;
-        varying vec3 vColor;
-        uniform float size;
-        void main() {
-          vAlpha = alpha;
-          vColor = color;
-          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size;
-          gl_Position = projectionMatrix * mvPosition;
-        }
-      `,
-      fragmentShader: `
-        uniform sampler2D pointTexture;
-        varying float vAlpha;
-        varying vec3 vColor;
-        void main() {
-          gl_FragColor = vec4(vColor, vAlpha) * texture2D(pointTexture, gl_PointCoord);
-        }
-      `,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      vertexColors: true,
-    });
-
-    const particles = new THREE.Points(geometry, material);
-    scene.add(particles);
-
-    particleSystemRef.current = { renderer, scene, camera, particles, velocities, particleCount };
-
-    const animateParticles = () => {
-      const sys = particleSystemRef.current;
-      if (!sys) return;
-      const pos = sys.particles.geometry.attributes.position.array as Float32Array;
-      const alph = sys.particles.geometry.attributes.alpha.array as Float32Array;
-      const time = Date.now() * 0.001;
-
-      for (let i = 0; i < sys.particleCount; i++) {
-        pos[i * 3] += sys.velocities[i] * 0.016;
-        if (pos[i * 3] > window.innerWidth / 2 + 100) {
-          pos[i * 3] = -window.innerWidth / 2 - 100;
-          pos[i * 3 + 1] = (Math.random() - 0.5) * 250;
-        }
-        pos[i * 3 + 1] += Math.sin(time + i * 0.1) * 0.5;
-        const twinkle = Math.floor(Math.random() * 10);
-        if (twinkle === 1 && alph[i] > 0) alph[i] -= 0.05;
-        else if (twinkle === 2 && alph[i] < 1) alph[i] += 0.05;
-        alph[i] = Math.max(0, Math.min(1, alph[i]));
-      }
-
-      sys.particles.geometry.attributes.position.needsUpdate = true;
-      sys.particles.geometry.attributes.alpha.needsUpdate = true;
-      sys.renderer.render(sys.scene, sys.camera);
-      requestAnimationFrame(animateParticles);
-    };
-    animateParticles();
-  }, []);
-
-  // Initialize scanner particle system (2D Canvas)
-  const initScanner = useCallback(() => {
+  useEffect(() => {
+    const container = containerRef.current;
     const canvas = scannerCanvasRef.current;
-    if (!canvas) return;
+    const cardLine = cardLineRef.current;
+    if (!container || !canvas || !cardLine) return;
+
+    let mounted = true;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const w = window.innerWidth;
-    const h = 300;
-    canvas.width = w;
-    canvas.height = h;
+    // Setup visibility observer
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0, rootMargin: "100px" }
+    );
+    observer.observe(container);
 
-    // Create gradient cache
+    // Init state
+    const state = stateRef.current;
+    state.containerWidth = window.innerWidth;
+    const cardWidth = 400;
+    const cardGap = 60;
+    state.cardLineWidth = (cardWidth + cardGap) * CARDS_COUNT;
+    state.position = state.containerWidth;
+    state.lastTime = performance.now();
+
+    // Create cards
+    createCards();
+
+    // Setup scanner canvas
+    const canvasWidth = window.innerWidth;
+    const canvasHeight = 300;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // Create gradient cache for scanner particles
     const gradientCanvas = document.createElement("canvas");
     gradientCanvas.width = 16;
     gradientCanvas.height = 16;
     const gCtx = gradientCanvas.getContext("2d")!;
     const gHalf = 8;
-    const gGrad = gCtx.createRadialGradient(gHalf, gHalf, 0, gHalf, gHalf, gHalf);
+    const gGrad = gCtx.createRadialGradient(
+      gHalf,
+      gHalf,
+      0,
+      gHalf,
+      gHalf,
+      gHalf
+    );
     gGrad.addColorStop(0, "rgba(255, 255, 255, 1)");
     gGrad.addColorStop(0.3, "rgba(196, 181, 253, 0.8)");
     gGrad.addColorStop(0.7, "rgba(139, 92, 246, 0.4)");
@@ -418,22 +314,38 @@ export default function CardBeamSection() {
     gCtx.arc(gHalf, gHalf, gHalf, 0, Math.PI * 2);
     gCtx.fill();
 
-    const baseIntensity = 0.8;
-    const baseMaxParticles = 800;
-    const baseFadeZone = 60;
+    // Create gradient cache for floating particles (replacing Three.js)
+    const floatingGradientCanvas = document.createElement("canvas");
+    floatingGradientCanvas.width = 32;
+    floatingGradientCanvas.height = 32;
+    const fCtx = floatingGradientCanvas.getContext("2d")!;
+    const fHalf = 16;
+    const fGrad = fCtx.createRadialGradient(
+      fHalf,
+      fHalf,
+      0,
+      fHalf,
+      fHalf,
+      fHalf
+    );
+    fGrad.addColorStop(0, "rgba(255, 255, 255, 0.8)");
+    fGrad.addColorStop(0.15, "rgba(100, 130, 220, 0.5)");
+    fGrad.addColorStop(0.4, "rgba(80, 100, 180, 0.2)");
+    fGrad.addColorStop(1, "transparent");
+    fCtx.fillStyle = fGrad;
+    fCtx.beginPath();
+    fCtx.arc(fHalf, fHalf, fHalf, 0, Math.PI * 2);
+    fCtx.fill();
 
-    type ScanParticle = {
-      x: number; y: number; vx: number; vy: number;
-      radius: number; alpha: number; originalAlpha: number;
-      life: number; time: number; decay: number;
-      twinkleSpeed: number; twinkleAmount: number;
-    };
+    const rf = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+    const lightBarX = canvasWidth / 2;
+    const lightBarWidth = 3;
+    const baseMaxParticles = 300;
 
-    const rf = (min: number, max: number) => Math.random() * (max - min) + min;
-
-    const createParticle = (lightBarX: number, lightBarWidth: number): ScanParticle => ({
+    const createScanParticle = (): ScanParticle => ({
       x: lightBarX + rf(-lightBarWidth / 2, lightBarWidth / 2),
-      y: rf(0, h),
+      y: rf(0, canvasHeight),
       vx: rf(0.2, 1.0),
       vy: rf(-0.15, 0.15),
       radius: rf(0.4, 1),
@@ -446,222 +358,336 @@ export default function CardBeamSection() {
       twinkleAmount: rf(0.1, 0.25),
     });
 
-    const particles: ScanParticle[] = [];
-    const lightBarX = w / 2;
-    const lightBarWidth = 3;
+    const scanParticles: ScanParticle[] = [];
     for (let i = 0; i < baseMaxParticles; i++) {
-      particles.push(createParticle(lightBarX, lightBarWidth));
+      scanParticles.push(createScanParticle());
     }
 
-    const state = {
+    // Create floating particles (replacement for Three.js)
+    const floatingParticles: FloatingParticle[] = [];
+    for (let i = 0; i < 50; i++) {
+      floatingParticles.push({
+        x: Math.random() * canvasWidth,
+        y: Math.random() * canvasHeight,
+        vx: rf(0.3, 1.5),
+        vy: rf(-0.3, 0.3),
+        alpha: rf(0.2, 0.8),
+        size: rf(2, 6),
+      });
+    }
+
+    scannerStateRef.current = {
       ctx,
-      particles,
-      w, h,
+      particles: scanParticles,
+      floatingParticles,
+      w: canvasWidth,
+      h: canvasHeight,
       lightBarX,
       lightBarWidth,
-      fadeZone: baseFadeZone,
-      intensity: baseIntensity,
-      maxParticles: baseMaxParticles,
-      baseIntensity,
+      fadeZone: 60,
+      baseIntensity: 0.5,
       baseMaxParticles,
-      baseFadeZone,
-      currentIntensity: baseIntensity,
+      baseFadeZone: 60,
+      currentIntensity: 0.5,
       currentMaxParticles: baseMaxParticles,
-      currentFadeZone: baseFadeZone,
+      currentFadeZone: 60,
       currentGlowIntensity: 1,
       gradientCanvas,
-      animId: 0,
+      floatingGradientCanvas,
     };
-    scannerRef.current = state;
 
-    const transitionSpeed = 0.05;
+    // Single unified animation loop
+    const tick = () => {
+      if (!mounted) return;
+      animFrameRef.current = requestAnimationFrame(tick);
+      if (!isVisibleRef.current) return;
 
-    const render = () => {
-      const s = scannerRef.current;
-      if (!s) return;
+      const scanner = scannerStateRef.current;
+      if (!scanner) return;
 
-      const scanning = stateRef.current.scanningActive;
-      const targetIntensity = scanning ? 1.8 : s.baseIntensity;
-      const targetMaxParticles = scanning ? 2500 : s.baseMaxParticles;
-      const targetFadeZone = scanning ? 35 : s.baseFadeZone;
+      // --- Card carousel ---
+      const currentTime = performance.now();
+      const deltaTime = (currentTime - state.lastTime) / 1000;
+      state.lastTime = currentTime;
+
+      if (state.isAnimating && !state.isDragging) {
+        if (state.velocity > 30) {
+          state.velocity *= 0.95;
+        } else {
+          state.velocity = Math.max(30, state.velocity);
+        }
+
+        state.position += state.velocity * state.direction * deltaTime;
+
+        if (state.position < -state.cardLineWidth) {
+          state.position = state.containerWidth;
+        } else if (state.position > state.containerWidth) {
+          state.position = -state.cardLineWidth;
+        }
+
+        if (cardLine) {
+          cardLine.style.transform = `translateX(${state.position}px)`;
+        }
+        updateCardClipping();
+      }
+
+      // --- Scanner rendering ---
+      const scanning = state.scanningActive;
+      const transitionSpeed = 0.05;
+      const targetIntensity = scanning ? 1.8 : scanner.baseIntensity;
+      const targetMaxParticles = scanning ? 800 : scanner.baseMaxParticles;
+      const targetFadeZone = scanning ? 35 : scanner.baseFadeZone;
       const targetGlow = scanning ? 3.5 : 1;
 
-      s.currentIntensity += (targetIntensity - s.currentIntensity) * transitionSpeed;
-      s.currentMaxParticles += (targetMaxParticles - s.currentMaxParticles) * transitionSpeed;
-      s.currentFadeZone += (targetFadeZone - s.currentFadeZone) * transitionSpeed;
-      s.currentGlowIntensity += (targetGlow - s.currentGlowIntensity) * transitionSpeed;
-      s.intensity = s.currentIntensity;
-      s.maxParticles = Math.floor(s.currentMaxParticles);
-      s.fadeZone = s.currentFadeZone;
+      scanner.currentIntensity +=
+        (targetIntensity - scanner.currentIntensity) * transitionSpeed;
+      scanner.currentMaxParticles +=
+        (targetMaxParticles - scanner.currentMaxParticles) * transitionSpeed;
+      scanner.currentFadeZone +=
+        (targetFadeZone - scanner.currentFadeZone) * transitionSpeed;
+      scanner.currentGlowIntensity +=
+        (targetGlow - scanner.currentGlowIntensity) * transitionSpeed;
 
-      s.ctx.globalCompositeOperation = "source-over";
-      s.ctx.clearRect(0, 0, s.w, s.h);
+      scanner.ctx.globalCompositeOperation = "source-over";
+      scanner.ctx.clearRect(0, 0, scanner.w, scanner.h);
+
+      // Draw floating particles first (background layer)
+      scanner.ctx.globalCompositeOperation = "lighter";
+      for (const fp of scanner.floatingParticles) {
+        fp.x += fp.vx;
+        fp.y += fp.vy + Math.sin(currentTime * 0.001 + fp.x * 0.01) * 0.3;
+
+        if (fp.x > scanner.w + 20) {
+          fp.x = -20;
+          fp.y = Math.random() * scanner.h;
+        }
+
+        let fadeAlpha = 1;
+        if (fp.y < 30) fadeAlpha = fp.y / 30;
+        else if (fp.y > scanner.h - 30) fadeAlpha = (scanner.h - fp.y) / 30;
+        fadeAlpha = Math.max(0, Math.min(1, fadeAlpha));
+
+        scanner.ctx.globalAlpha = fp.alpha * fadeAlpha;
+        scanner.ctx.drawImage(
+          scanner.floatingGradientCanvas,
+          fp.x - fp.size,
+          fp.y - fp.size,
+          fp.size * 2,
+          fp.size * 2
+        );
+      }
 
       // Draw light bar
-      const vGrad = s.ctx.createLinearGradient(0, 0, 0, s.h);
+      const vGrad = scanner.ctx.createLinearGradient(0, 0, 0, scanner.h);
       vGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
-      vGrad.addColorStop(s.fadeZone / s.h, "rgba(255, 255, 255, 1)");
-      vGrad.addColorStop(1 - s.fadeZone / s.h, "rgba(255, 255, 255, 1)");
+      vGrad.addColorStop(
+        scanner.currentFadeZone / scanner.h,
+        "rgba(255, 255, 255, 1)"
+      );
+      vGrad.addColorStop(
+        1 - scanner.currentFadeZone / scanner.h,
+        "rgba(255, 255, 255, 1)"
+      );
       vGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
 
-      s.ctx.globalCompositeOperation = "lighter";
-      const gl = s.currentGlowIntensity;
-      const lw = s.lightBarWidth;
+      scanner.ctx.globalCompositeOperation = "lighter";
+      const gl = scanner.currentGlowIntensity;
+      const lw = scanner.lightBarWidth;
 
-      // Core
-      const coreGrad = s.ctx.createLinearGradient(s.lightBarX - lw / 2, 0, s.lightBarX + lw / 2, 0);
+      // Core bar
+      const coreGrad = scanner.ctx.createLinearGradient(
+        scanner.lightBarX - lw / 2,
+        0,
+        scanner.lightBarX + lw / 2,
+        0
+      );
       coreGrad.addColorStop(0, "rgba(255, 255, 255, 0)");
       coreGrad.addColorStop(0.3, `rgba(255, 255, 255, ${0.9 * gl})`);
       coreGrad.addColorStop(0.5, `rgba(255, 255, 255, ${1 * gl})`);
       coreGrad.addColorStop(0.7, `rgba(255, 255, 255, ${0.9 * gl})`);
       coreGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
-      s.ctx.globalAlpha = 1;
-      s.ctx.fillStyle = coreGrad;
-      s.ctx.beginPath();
-      s.ctx.roundRect(s.lightBarX - lw / 2, 0, lw, s.h, 15);
-      s.ctx.fill();
+      scanner.ctx.globalAlpha = 1;
+      scanner.ctx.fillStyle = coreGrad;
+      scanner.ctx.beginPath();
+      scanner.ctx.roundRect(
+        scanner.lightBarX - lw / 2,
+        0,
+        lw,
+        scanner.h,
+        15
+      );
+      scanner.ctx.fill();
 
       // Glow 1
-      const g1 = s.ctx.createLinearGradient(s.lightBarX - lw * 2, 0, s.lightBarX + lw * 2, 0);
+      const g1 = scanner.ctx.createLinearGradient(
+        scanner.lightBarX - lw * 2,
+        0,
+        scanner.lightBarX + lw * 2,
+        0
+      );
       g1.addColorStop(0, "rgba(139, 92, 246, 0)");
       g1.addColorStop(0.5, `rgba(196, 181, 253, ${0.8 * gl})`);
       g1.addColorStop(1, "rgba(139, 92, 246, 0)");
-      s.ctx.globalAlpha = scanning ? 1.0 : 0.8;
-      s.ctx.fillStyle = g1;
-      s.ctx.beginPath();
-      s.ctx.roundRect(s.lightBarX - lw * 2, 0, lw * 4, s.h, 25);
-      s.ctx.fill();
+      scanner.ctx.globalAlpha = scanning ? 1.0 : 0.8;
+      scanner.ctx.fillStyle = g1;
+      scanner.ctx.beginPath();
+      scanner.ctx.roundRect(
+        scanner.lightBarX - lw * 2,
+        0,
+        lw * 4,
+        scanner.h,
+        25
+      );
+      scanner.ctx.fill();
 
       // Glow 2
-      const g2 = s.ctx.createLinearGradient(s.lightBarX - lw * 4, 0, s.lightBarX + lw * 4, 0);
+      const g2 = scanner.ctx.createLinearGradient(
+        scanner.lightBarX - lw * 4,
+        0,
+        scanner.lightBarX + lw * 4,
+        0
+      );
       g2.addColorStop(0, "rgba(139, 92, 246, 0)");
       g2.addColorStop(0.5, `rgba(139, 92, 246, ${0.4 * gl})`);
       g2.addColorStop(1, "rgba(139, 92, 246, 0)");
-      s.ctx.globalAlpha = scanning ? 0.8 : 0.6;
-      s.ctx.fillStyle = g2;
-      s.ctx.beginPath();
-      s.ctx.roundRect(s.lightBarX - lw * 4, 0, lw * 8, s.h, 35);
-      s.ctx.fill();
+      scanner.ctx.globalAlpha = scanning ? 0.8 : 0.6;
+      scanner.ctx.fillStyle = g2;
+      scanner.ctx.beginPath();
+      scanner.ctx.roundRect(
+        scanner.lightBarX - lw * 4,
+        0,
+        lw * 8,
+        scanner.h,
+        35
+      );
+      scanner.ctx.fill();
 
       // Mask with vertical gradient
-      s.ctx.globalCompositeOperation = "destination-in";
-      s.ctx.globalAlpha = 1;
-      s.ctx.fillStyle = vGrad;
-      s.ctx.fillRect(0, 0, s.w, s.h);
+      scanner.ctx.globalCompositeOperation = "destination-in";
+      scanner.ctx.globalAlpha = 1;
+      scanner.ctx.fillStyle = vGrad;
+      scanner.ctx.fillRect(0, 0, scanner.w, scanner.h);
 
-      // Draw particles
-      s.ctx.globalCompositeOperation = "lighter";
-      for (let i = s.particles.length - 1; i >= 0; i--) {
-        const p = s.particles[i];
+      // Draw scanner particles
+      scanner.ctx.globalCompositeOperation = "lighter";
+      const maxParticles = Math.floor(scanner.currentMaxParticles);
+      for (let i = scanner.particles.length - 1; i >= 0; i--) {
+        const p = scanner.particles[i];
         p.x += p.vx;
         p.y += p.vy;
         p.time++;
-        p.alpha = p.originalAlpha * p.life + Math.sin(p.time * p.twinkleSpeed) * p.twinkleAmount;
+        p.alpha =
+          p.originalAlpha * p.life +
+          Math.sin(p.time * p.twinkleSpeed) * p.twinkleAmount;
         p.life -= p.decay;
 
-        if (p.x > s.w + 10 || p.life <= 0) {
-          Object.assign(p, createParticle(s.lightBarX, s.lightBarWidth));
+        if (p.x > scanner.w + 10 || p.life <= 0) {
+          Object.assign(p, createScanParticle());
           continue;
         }
 
         let fadeAlpha = 1;
-        if (p.y < s.fadeZone) fadeAlpha = p.y / s.fadeZone;
-        else if (p.y > s.h - s.fadeZone) fadeAlpha = (s.h - p.y) / s.fadeZone;
+        if (p.y < scanner.currentFadeZone)
+          fadeAlpha = p.y / scanner.currentFadeZone;
+        else if (p.y > scanner.h - scanner.currentFadeZone)
+          fadeAlpha = (scanner.h - p.y) / scanner.currentFadeZone;
         fadeAlpha = Math.max(0, Math.min(1, fadeAlpha));
 
-        s.ctx.globalAlpha = p.alpha * fadeAlpha;
-        s.ctx.drawImage(s.gradientCanvas, p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
+        scanner.ctx.globalAlpha = p.alpha * fadeAlpha;
+        scanner.ctx.drawImage(
+          scanner.gradientCanvas,
+          p.x - p.radius,
+          p.y - p.radius,
+          p.radius * 2,
+          p.radius * 2
+        );
       }
 
-      // Spawn new particles based on intensity
-      if (Math.random() < s.intensity && s.particles.length < s.maxParticles) {
-        s.particles.push(createParticle(s.lightBarX, s.lightBarWidth));
+      // Spawn new scan particles based on intensity
+      if (
+        Math.random() < scanner.currentIntensity &&
+        scanner.particles.length < maxParticles
+      ) {
+        scanner.particles.push(createScanParticle());
       }
 
       // Trim excess
-      if (s.particles.length > s.maxParticles + 200) {
-        s.particles.splice(s.maxParticles, s.particles.length - s.maxParticles);
+      if (scanner.particles.length > maxParticles + 200) {
+        scanner.particles.splice(
+          maxParticles,
+          scanner.particles.length - maxParticles
+        );
       }
-
-      s.animId = requestAnimationFrame(render);
     };
 
-    state.animId = requestAnimationFrame(render);
-  }, []);
-
-  useEffect(() => {
-    const s = stateRef.current;
-    s.containerWidth = window.innerWidth;
-    const cardWidth = 400;
-    const cardGap = 60;
-    s.cardLineWidth = (cardWidth + cardGap) * CARDS_COUNT;
-    s.position = s.containerWidth;
-    s.lastTime = performance.now();
-
-    createCards();
-    initParticleSystem();
-    initScanner();
-
-    animFrameRef.current = requestAnimationFrame(animate);
+    animFrameRef.current = requestAnimationFrame(tick);
 
     // Periodic ASCII updates
     asciiIntervalRef.current = setInterval(() => {
-      const cardLine = cardLineRef.current;
-      if (!cardLine) return;
-      cardLine.querySelectorAll(".cb-ascii-content").forEach((content) => {
-        if (Math.random() < 0.15) {
+      if (!isVisibleRef.current) return;
+      const cl = cardLineRef.current;
+      if (!cl) return;
+      cl.querySelectorAll(".cb-ascii-content").forEach((content) => {
+        if (Math.random() < 0.1) {
           const { width, height } = calculateCodeDimensions(400, 250);
           content.textContent = generateCode(width, height);
         }
       });
-    }, 200);
+    }, 2000);
 
     // Drag handlers
-    const cardLine = cardLineRef.current;
-    if (!cardLine) return;
-
     const startDrag = (clientX: number) => {
-      s.isDragging = true;
-      s.isAnimating = false;
-      s.lastMouseX = clientX;
-      s.mouseVelocity = 0;
+      state.isDragging = true;
+      state.isAnimating = false;
+      state.lastMouseX = clientX;
+      state.mouseVelocity = 0;
       const transform = window.getComputedStyle(cardLine).transform;
       if (transform !== "none") {
         const matrix = new DOMMatrix(transform);
-        s.position = matrix.m41;
+        state.position = matrix.m41;
       }
     };
 
     const onDrag = (clientX: number) => {
-      if (!s.isDragging) return;
-      const deltaX = clientX - s.lastMouseX;
-      s.position += deltaX;
-      s.mouseVelocity = deltaX * 60;
-      s.lastMouseX = clientX;
-      cardLine.style.transform = `translateX(${s.position}px)`;
+      if (!state.isDragging) return;
+      const deltaX = clientX - state.lastMouseX;
+      state.position += deltaX;
+      state.mouseVelocity = deltaX * 60;
+      state.lastMouseX = clientX;
+      cardLine.style.transform = `translateX(${state.position}px)`;
       updateCardClipping();
     };
 
     const endDrag = () => {
-      if (!s.isDragging) return;
-      s.isDragging = false;
-      if (Math.abs(s.mouseVelocity) > 30) {
-        s.velocity = Math.abs(s.mouseVelocity);
-        s.direction = s.mouseVelocity > 0 ? 1 : -1;
+      if (!state.isDragging) return;
+      state.isDragging = false;
+      if (Math.abs(state.mouseVelocity) > 30) {
+        state.velocity = Math.abs(state.mouseVelocity);
+        state.direction = state.mouseVelocity > 0 ? 1 : -1;
       } else {
-        s.velocity = 120;
+        state.velocity = 120;
       }
-      s.isAnimating = true;
+      state.isAnimating = true;
     };
 
-    const onMouseDown = (e: MouseEvent) => { e.preventDefault(); startDrag(e.clientX); };
-    const onMouseMove = (e: MouseEvent) => { if (s.isDragging) { e.preventDefault(); onDrag(e.clientX); } };
+    const onMouseDown = (event: MouseEvent) => {
+      event.preventDefault();
+      startDrag(event.clientX);
+    };
+    const onMouseMove = (event: MouseEvent) => {
+      if (state.isDragging) {
+        event.preventDefault();
+        onDrag(event.clientX);
+      }
+    };
     const onMouseUp = () => endDrag();
-    const onTouchStart = (e: TouchEvent) => { startDrag(e.touches[0].clientX); };
-    const onTouchMove = (e: TouchEvent) => {
-      if (!s.isDragging) return;
-      e.preventDefault();
-      onDrag(e.touches[0].clientX);
+    const onTouchStart = (event: TouchEvent) => {
+      startDrag(event.touches[0].clientX);
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      if (!state.isDragging) return;
+      event.preventDefault();
+      onDrag(event.touches[0].clientX);
     };
     const onTouchEnd = () => endDrag();
 
@@ -673,36 +699,23 @@ export default function CardBeamSection() {
     document.addEventListener("touchend", onTouchEnd);
 
     const onResize = () => {
-      s.containerWidth = window.innerWidth;
-      if (particleSystemRef.current) {
-        const sys = particleSystemRef.current;
-        sys.camera.left = -window.innerWidth / 2;
-        sys.camera.right = window.innerWidth / 2;
-        sys.camera.updateProjectionMatrix();
-        sys.renderer.setSize(window.innerWidth, 250);
-      }
-      if (scannerRef.current) {
-        const sc = scannerRef.current;
-        sc.w = window.innerWidth;
-        sc.lightBarX = window.innerWidth / 2;
-        const canvas = scannerCanvasRef.current;
-        if (canvas) {
-          canvas.width = sc.w;
-          canvas.height = sc.h;
-        }
+      state.containerWidth = window.innerWidth;
+      const newWidth = window.innerWidth;
+      if (scannerStateRef.current) {
+        scannerStateRef.current.w = newWidth;
+        scannerStateRef.current.lightBarX = newWidth / 2;
+        canvas.width = newWidth;
+        canvas.height = canvasHeight;
       }
     };
     window.addEventListener("resize", onResize);
 
     return () => {
+      mounted = false;
       cancelAnimationFrame(animFrameRef.current);
-      if (scannerRef.current) cancelAnimationFrame(scannerRef.current.animId);
       if (asciiIntervalRef.current) clearInterval(asciiIntervalRef.current);
-      if (particleSystemRef.current) {
-        particleSystemRef.current.renderer.dispose();
-        particleSystemRef.current.particles.geometry.dispose();
-        (particleSystemRef.current.particles.material as THREE.Material).dispose();
-      }
+      scannerStateRef.current = null;
+      observer.disconnect();
       cardLine.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
@@ -711,7 +724,7 @@ export default function CardBeamSection() {
       document.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", onResize);
     };
-  }, [createCards, animate, initParticleSystem, initScanner, updateCardClipping]);
+  }, [createCards, updateCardClipping]);
 
   return (
     <section className="relative overflow-hidden py-24">
@@ -730,7 +743,6 @@ export default function CardBeamSection() {
       </div>
 
       <div ref={containerRef} className="cb-container">
-        <canvas ref={particleCanvasRef} className="cb-particle-canvas" />
         <canvas ref={scannerCanvasRef} className="cb-scanner-canvas" />
         <div className="cb-card-stream">
           <div ref={cardLineRef} className="cb-card-line" />

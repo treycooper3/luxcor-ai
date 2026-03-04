@@ -1,5 +1,10 @@
 import CardBeamSection from "./components/CardBeamSection";
 import MatrixBackground from "./components/MatrixBackground";
+import ScrollReveal from "./components/ScrollReveal";
+import TiltCard from "./components/TiltCard";
+import ServicesTabs from "./components/ServicesTabs";
+import PortfolioCards from "./components/PortfolioCards";
+import PortfolioShowcase from "./components/PortfolioShowcase";
 
 const CALENDLY_URL = "https://calendly.com/treycooper333/onboarding-meeting";
 
@@ -26,24 +31,30 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#" className="text-2xl font-bold tracking-wider">
-          <span className="gold-gradient">LUXCOR</span>
-          <span className="ml-1 text-sm font-light tracking-widest text-muted">
+        <a href="#" className="text-3xl font-serif font-bold tracking-[0.15em]">
+          <span className="luxury-gradient">LUXCOR</span>
+          <span className="ml-1 text-xs font-sans font-light tracking-widest text-muted">
             AI
           </span>
         </a>
         <div className="hidden items-center gap-8 md:flex">
           <a
             href="#services"
-            className="text-sm text-muted transition-colors hover:text-foreground"
+            className="nav-link text-sm text-muted transition-colors hover:text-foreground"
           >
             Services
           </a>
           <a
             href="#portfolio"
-            className="text-sm text-muted transition-colors hover:text-foreground"
+            className="nav-link text-sm text-muted transition-colors hover:text-foreground"
           >
             Portfolio
+          </a>
+          <a
+            href="#our-work"
+            className="nav-link text-sm text-muted transition-colors hover:text-foreground"
+          >
+            Our Work
           </a>
           <a
             href={CALENDLY_URL}
@@ -75,10 +86,10 @@ function Hero() {
         <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
           AI Solutions for Growing Businesses
         </p>
-        <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight md:text-7xl">
+        <h1 className="mb-6 font-serif text-5xl font-bold leading-tight tracking-tight md:text-7xl">
           Stop Losing Revenue
           <br />
-          <span className="gold-gradient">To Manual Workflows</span>
+          <span className="luxury-gradient">To Manual Workflows</span>
         </h1>
         <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted md:text-xl">
           Your team is buried in repetitive tasks, missed follow-ups, and
@@ -90,7 +101,7 @@ function Hero() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-gold px-8 py-4 text-base font-semibold text-black transition-all hover:bg-gold-light hover:shadow-[0_0_30px_rgba(14,165,233,0.3)]"
+            className="cta-button rounded-full bg-gold px-8 py-4 text-base font-semibold text-black hover:bg-gold-light"
           >
             Get in Touch
           </a>
@@ -188,24 +199,28 @@ function Problem() {
   return (
     <section className="px-6 py-24">
       <div className="mx-auto max-w-4xl text-center">
-        <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
-          The Problem
-        </p>
-        <h2 className="mb-6 text-3xl font-bold md:text-4xl">
-          Manual Work Is Costing You Money
-        </h2>
-        <p className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-muted">
-          Missed follow-ups. Hours wasted on repetitive tasks. Phone calls that
-          go unanswered. Leads slipping through the cracks. You know AI could
-          fix this, but where do you start?
-        </p>
+        <ScrollReveal>
+          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-accent-gold">
+            The Problem
+          </p>
+          <h2 className="mb-6 font-serif text-3xl font-bold md:text-4xl">
+            Manual Work Is <span className="luxury-gradient">Costing You Money</span>
+          </h2>
+          <p className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-muted">
+            Missed follow-ups. Hours wasted on repetitive tasks. Phone calls that
+            go unanswered. Leads slipping through the cracks. You know AI could
+            fix this, but where do you start?
+          </p>
+        </ScrollReveal>
         <div className="grid gap-6 md:grid-cols-3">
-          {cards.map((item, i) => (
-            <div key={i} className="glass-card rounded-2xl p-8 text-left">
-              <div className="mb-4 text-gold">{item.icon}</div>
-              <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
-              <p className="text-sm leading-relaxed text-muted">{item.desc}</p>
-            </div>
+          {cards.map((item, index) => (
+            <ScrollReveal key={index} delay={index * 100}>
+              <TiltCard className="glass-card-interactive rounded-2xl p-8 text-left h-full">
+                <div className="mb-4 text-gold">{item.icon}</div>
+                <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-muted">{item.desc}</p>
+              </TiltCard>
+            </ScrollReveal>
           ))}
         </div>
       </div>
@@ -268,68 +283,22 @@ function Services() {
   return (
     <section id="services" className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
-            Services
-          </p>
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Simple Pricing. Serious Results.
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted">
-            From a quick audit to a full AI overhaul. We meet you where you are.
-          </p>
-        </div>
-        <div className="grid gap-8 md:grid-cols-3">
-          {tiers.map((tier, i) => (
-            <div
-              key={i}
-              className={`glass-card relative rounded-2xl p-8 ${
-                tier.popular ? "popular-glow border-gold/30" : ""
-              }`}
-            >
-              {tier.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gold px-4 py-1 text-xs font-bold uppercase tracking-wider text-black">
-                  Most Popular
-                </div>
-              )}
-              <h3 className="mb-2 text-xl font-bold">{tier.name}</h3>
-              <div className="mb-1">
-                <span className="text-3xl font-bold gold-gradient">
-                  {tier.price}
-                </span>
-              </div>
-              <p className="mb-4 text-sm text-muted">{tier.period}</p>
-              <p className="mb-6 text-sm leading-relaxed text-muted">
-                {tier.description}
-              </p>
-              <ul className="mb-8 space-y-3">
-                {tier.features.map((feature, j) => (
-                  <li
-                    key={j}
-                    className="flex items-start gap-2 text-sm text-foreground"
-                  >
-                    <span className="mt-0.5 text-gold">
-                      <CheckIcon />
-                    </span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href={CALENDLY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`block w-full rounded-full py-3 text-center text-sm font-semibold transition-all ${
-                  tier.popular
-                    ? "bg-gold text-black hover:bg-gold-light hover:shadow-[0_0_20px_rgba(14,165,233,0.3)]"
-                    : "border border-white/20 text-foreground hover:border-white/40 hover:bg-white/5"
-                }`}
-              >
-                {tier.cta}
-              </a>
-            </div>
-          ))}
-        </div>
+        <ScrollReveal>
+          <div className="mb-16 text-center">
+            <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-accent-gold">
+              Services
+            </p>
+            <h2 className="mb-4 font-serif text-3xl font-bold md:text-4xl">
+              Simple Pricing. <span className="luxury-gradient">Serious Results.</span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted">
+              From a quick audit to a full AI overhaul. We meet you where you are.
+            </p>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal delay={200}>
+          <ServicesTabs tiers={tiers} calendlyUrl={CALENDLY_URL} />
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -339,32 +308,74 @@ const caseStudies = [
   {
     client: "Financial Aid Network",
     type: "AI Voice Agent",
+    tagline: "24/7 AI receptionist at $0.15/call",
     problem:
-      "Overwhelmed staff couldn't keep up with inbound calls. Prospective students were waiting on hold or getting voicemail, then going to competitors.",
+      "Overwhelmed staff spending hours on repetitive calls. Students waiting on hold or going to competitors.",
     solution:
-      "Built an AI voice agent that handles inbound calls 24/7, qualifies leads by asking key questions, and books appointments directly on the team's calendar.",
+      'Built "Dominique" — an AI voice agent on VAPI that handles inbound calls 24/7, qualifies callers, verifies identity, books appointments, and warm-transfers complex cases.',
     result:
-      "Zero missed calls. Faster lead qualification. Staff freed up to focus on enrolled students instead of answering phones.",
+      "Zero missed calls. $0.15/call vs $40K/year receptionist. Staff freed to focus on enrolled students.",
+    features: ["24/7 Call Handling", "Lead Qualification", "Calendar Booking", "Warm Transfer"],
   },
   {
     client: "Clicking with Carissa",
-    type: "Website & Digital Presence",
+    type: "Website & Booking System",
+    tagline: "Portfolio site that books sessions on autopilot",
     problem:
-      "A growing photography brand with no professional web presence. Leads came from word-of-mouth only, with no way to showcase work, capture inquiries, or book sessions online.",
+      "Growing photography brand with no web presence. All bookings through Instagram DMs with zero pricing transparency.",
     solution:
-      "Designed and built a full brand website with portfolio gallery, service packages, client testimonials, and an integrated booking/inquiry flow.",
+      "Multi-page animated website with filterable portfolio gallery, transparent 3-tier pricing, and integrated booking calendar with automated email notifications.",
     result:
-      "Professional online presence that converts visitors into booked sessions. Portfolio showcases work 24/7, generating inbound leads on autopilot.",
+      "Professional presence converting visitors to booked sessions in under 2 minutes. Inbound leads on autopilot.",
+    features: ["Portfolio Gallery", "Booking Calendar", "Tiered Pricing", "Auto Notifications"],
   },
   {
     client: "TnD Mechanical",
-    type: "Website & Lead Generation",
+    type: "Full Digital Transformation",
+    tagline: "Website + AI voice agent + auto proposals in 60 seconds",
     problem:
-      "An established HVAC and mechanical contracting business with no online presence. All business came from referrals, missing a massive channel for new customer acquisition.",
+      "Commercial HVAC contractor with no digital presence. Missed calls during jobs, manual follow-up, losing bids to faster competitors.",
     solution:
-      "Built a professional services website with clear service descriptions, service area coverage, customer reviews, and a streamlined contact/quote request form.",
+      "Full-stack build: website + AI voice receptionist + 9-node CRM automation that generates branded proposal decks in under 60 seconds.",
     result:
-      "Credible online presence that ranks for local searches. New lead channel generating quote requests from homeowners and property managers.",
+      "Every lead gets a custom proposal before the competition responds. 24/7 call coverage at $0.10/call.",
+    features: ["AI Voice Agent", "9-Node CRM", "Auto Proposals", "60-Second Turnaround"],
+  },
+  {
+    client: "C&C Contracting",
+    type: "Brand Identity & Website",
+    tagline: "Professional brand for a general contractor",
+    problem:
+      "Licensed general contractor with no online presence. Property managers and GCs Googling them and finding nothing.",
+    solution:
+      "Custom brand identity + professional website with project portfolio, service areas, and lead capture form with automated routing.",
+    result:
+      "Credible digital presence that wins bids. Professional brand matching the quality of their work.",
+    features: ["Brand Identity", "Logo Design", "Lead Capture", "Automated Routing"],
+  },
+  {
+    client: "KayphoriaX",
+    type: "Luxury Fashion E-Commerce",
+    tagline: "Editorial redesign + Shopify for NYFW designer",
+    problem:
+      "Luxury fashion brand with NYFW and LAFW credentials, but an outdated website that didn't match the runway presence.",
+    solution:
+      "Editorial-grade website redesign with Shopify integration for 4 collections, AI-generated brand assets, and Aura Wear app marketing hub.",
+    result:
+      "NYFW-ready digital storefront. Seamless brand-to-commerce pipeline driving Shopify sales.",
+    features: ["Editorial Design", "Shopify Integration", "AI Brand Assets", "Aura Wear Hub"],
+  },
+  {
+    client: "SurgicalFX",
+    type: "Trading Platform",
+    tagline: "Live ticker + transparent track record for forex",
+    problem:
+      "Forex signal provider with growing Discord but no web presence. Hard to establish credibility in a space full of scams.",
+    solution:
+      "Professional trading platform with live currency ticker, transparent trade log with chart screenshots, lightbox gallery, and Discord integration.",
+    result:
+      "Professional credibility platform driving Discord signups. Transparent results building trust instantly.",
+    features: ["Live Ticker", "Track Record", "Chart Gallery", "Discord Integration"],
   },
 ];
 
@@ -372,56 +383,93 @@ function CaseStudies() {
   return (
     <section id="portfolio" className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
-            Portfolio
-          </p>
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            What We&apos;ve Built
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted">
-            We don&apos;t just talk about AI. We build it and ship it.
-            Here&apos;s what we&apos;ve done for our clients.
-          </p>
-        </div>
-        <div className="grid gap-8 md:grid-cols-3">
-          {caseStudies.map((study, i) => (
-            <div key={i} className="glass-card rounded-2xl p-8">
-              <div className="mb-4 flex items-center justify-between">
-                <span className="rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
-                  {study.type}
-                </span>
-              </div>
-              <h3 className="mb-4 text-xl font-bold">{study.client}</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-gold">
-                    Challenge
-                  </p>
-                  <p className="text-sm leading-relaxed text-muted">
-                    {study.problem}
-                  </p>
-                </div>
-                <div>
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-gold">
-                    Solution
-                  </p>
-                  <p className="text-sm leading-relaxed text-muted">
-                    {study.solution}
-                  </p>
-                </div>
-                <div>
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-gold">
-                    Result
-                  </p>
-                  <p className="text-sm leading-relaxed text-foreground">
-                    {study.result}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ScrollReveal>
+          <div className="mb-16 text-center">
+            <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-accent-gold">
+              Portfolio
+            </p>
+            <h2 className="mb-4 font-serif text-3xl font-bold md:text-4xl">
+              What We&apos;ve <span className="luxury-gradient">Built</span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted">
+              We don&apos;t just talk about AI. We build it and ship it.
+              Here&apos;s what we&apos;ve done for our clients.
+            </p>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal delay={200}>
+          <PortfolioCards caseStudies={caseStudies} calendlyUrl={CALENDLY_URL} />
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+const showcaseItems = [
+  {
+    client: "Stay Starving",
+    type: "Media & Digital Agency",
+    image: "/portfolio/staystarving.png",
+    url: "https://staystarving.com",
+  },
+  {
+    client: "KayphoriaX",
+    type: "Luxury Fashion E-Commerce",
+    image: "/portfolio/kayphoriax.png",
+    url: "https://kayphoriax.style",
+  },
+  {
+    client: "SurgicalFX",
+    type: "Trading Platform",
+    image: "/portfolio/surgicalfx.png",
+    url: "https://surgicalfx.vercel.app",
+  },
+  {
+    client: "Financial Aid Network",
+    type: "AI Voice Agent",
+    image: null,
+    url: null,
+  },
+  {
+    client: "TnD Mechanical",
+    type: "Full Digital Transformation",
+    image: "/portfolio/tnd-mechanical.png",
+    url: "https://tndmechanical.com",
+  },
+  {
+    client: "C&C Contracting",
+    type: "Brand Identity & Website",
+    image: "/portfolio/cc-contracting.png",
+    url: "https://cccontracting.vercel.app",
+  },
+  {
+    client: "Clicking with Carissa",
+    type: "Website & Booking",
+    image: "/portfolio/clicking-with-carissa.png",
+    url: "https://clickingwithcarissa.netlify.app",
+  },
+];
+
+function Showcase() {
+  return (
+    <section id="our-work" className="px-6 py-24">
+      <div className="mx-auto max-w-6xl">
+        <ScrollReveal>
+          <div className="mb-16 text-center">
+            <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-accent-gold">
+              Our Work
+            </p>
+            <h2 className="mb-4 font-serif text-3xl font-bold md:text-4xl">
+              Built. Shipped. <span className="luxury-gradient">Delivering.</span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted">
+              Real projects. Real clients. Real results.
+            </p>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal delay={200}>
+          <PortfolioShowcase items={showcaseItems} />
+        </ScrollReveal>
       </div>
     </section>
   );
@@ -430,27 +478,29 @@ function CaseStudies() {
 function CTAFooter() {
   return (
     <section className="hero-gradient px-6 py-24">
-      <div className="mx-auto max-w-3xl text-center">
-        <h2 className="mb-4 text-3xl font-bold md:text-5xl">
-          Ready to Put AI to Work?
-        </h2>
-        <p className="mb-10 text-lg text-muted">
-          Book a free strategy call. We&apos;ll audit your workflows, show you
-          where AI fits, and give you a clear roadmap. No strings attached.
-        </p>
-        <a
-          href={CALENDLY_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block rounded-full bg-gold px-10 py-4 text-lg font-semibold text-black transition-all hover:bg-gold-light hover:shadow-[0_0_40px_rgba(14,165,233,0.3)]"
-        >
-          Get in Touch
-        </a>
-        <p className="mt-6 text-sm text-muted">
-          15 minutes. No pressure. Just clarity on how AI can help your
-          business.
-        </p>
-      </div>
+      <ScrollReveal>
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-4 font-serif text-3xl font-bold md:text-5xl">
+            Ready to Put <span className="luxury-gradient">AI to Work?</span>
+          </h2>
+          <p className="mb-10 text-lg text-muted">
+            Book a free strategy call. We&apos;ll audit your workflows, show you
+            where AI fits, and give you a clear roadmap. No strings attached.
+          </p>
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cta-button inline-block rounded-full bg-gold px-10 py-4 text-lg font-semibold text-black hover:bg-gold-light"
+          >
+            Get in Touch
+          </a>
+          <p className="mt-6 text-sm text-muted">
+            15 minutes. No pressure. Just clarity on how AI can help your
+            business.
+          </p>
+        </div>
+      </ScrollReveal>
     </section>
   );
 }
@@ -465,21 +515,27 @@ function Footer() {
         <div className="flex gap-6 text-sm text-muted">
           <a
             href="#services"
-            className="transition-colors hover:text-foreground"
+            className="nav-link transition-colors hover:text-foreground"
           >
             Services
           </a>
           <a
             href="#portfolio"
-            className="transition-colors hover:text-foreground"
+            className="nav-link transition-colors hover:text-foreground"
           >
             Portfolio
+          </a>
+          <a
+            href="#our-work"
+            className="nav-link transition-colors hover:text-foreground"
+          >
+            Our Work
           </a>
           <a
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors hover:text-gold"
+            className="nav-link transition-colors hover:text-accent-gold"
           >
             Contact
           </a>
@@ -498,6 +554,7 @@ export default function Home() {
       <CardBeamSection />
       <Services />
       <CaseStudies />
+      <Showcase />
       <CTAFooter />
       <Footer />
     </>
