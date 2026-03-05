@@ -19,9 +19,10 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Luxcor AI | Premium AI Solutions for Business",
+  metadataBase: new URL("https://luxcor.tech"),
+  title: "Luxcor AI | Custom AI Automation for Growing Businesses",
   description:
-    "Luxcor AI builds custom AI automations, voice agents, and intelligent workflows that save your business time and money. Book a free strategy call today.",
+    "Luxcor AI builds custom AI automations, voice agents, and intelligent workflows that save your business time and money. Starter audit from $997. Book a free strategy call today.",
   keywords: [
     "AI automation",
     "AI agency",
@@ -29,19 +30,30 @@ export const metadata: Metadata = {
     "voice agents",
     "AI workflows",
     "custom AI solutions",
+    "AI automation agency",
+    "custom AI agents",
   ],
+  verification: {
+    google: "wT55R7UEGuKH4kO6K1UmghyTnbuoPKHg5O2EFH4C6kg",
+  },
+  alternates: {
+    canonical: "https://luxcor.tech",
+  },
   openGraph: {
-    title: "Luxcor AI | Premium AI Solutions for Business",
+    title: "Luxcor AI | Custom AI Automation for Growing Businesses",
     description:
-      "Custom AI automations, voice agents, and intelligent workflows that save your business time and money.",
+      "Custom AI automations, voice agents, and intelligent workflows that save your business time and money. 6+ client projects delivered.",
     type: "website",
     locale: "en_US",
+    url: "https://luxcor.tech",
+    siteName: "Luxcor AI",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Luxcor AI | Premium AI Solutions for Business",
+    title: "Luxcor AI | Custom AI Automation for Growing Businesses",
     description:
       "Custom AI automations, voice agents, and intelligent workflows that save your business time and money.",
+    creator: "@treythesavage3",
   },
 };
 

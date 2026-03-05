@@ -1,0 +1,58 @@
+# LuxCor AI — Custom AI Automation Agency
+
+> LuxCor AI builds custom AI automations, voice agents, and intelligent workflows for growing businesses. A division of Stay Starving Holdings LLC, founded by Charles "Trey" Cooper III. 6+ client projects delivered including websites, apps, and AI-powered systems.
+
+## Services
+
+### AI Workflow Audit (Starter)
+- Price: Starting at $997
+- Comprehensive audit of existing business processes
+- Identify automation opportunities with ROI projections
+- Actionable implementation roadmap
+
+### Growth Retainer
+- Price: $4,500/month
+- Ongoing AI automation development and optimization
+- Custom AI agent deployment and maintenance
+- Monthly strategy sessions and reporting
+
+### Enterprise Build
+- Price: $30,000–$50,000
+- Full-scale AI system architecture and deployment
+- Custom voice agents, workflow automation, and integrations
+- End-to-end project delivery with training
+
+## Technology
+
+### WAT Framework (Workflows, Agents, Tools)
+LuxCor AI's proprietary architecture for reliable AI systems:
+- **Workflows**: Markdown SOPs defining objectives, inputs, tools, outputs, and edge cases
+- **Agents**: AI decision-makers that orchestrate execution and handle failures
+- **Tools**: Deterministic Python scripts for API calls, data transformations, and file operations
+- Key insight: A five-step AI workflow at 90% accuracy per step yields only 59% end-to-end. WAT achieves near 100% per-step tool accuracy by separating reasoning from execution.
+
+## Capabilities
+- Custom AI agent development and deployment
+- Voice agent setup (lead qualification, customer support, appointment scheduling)
+- Workflow automation (n8n, Python, API integrations)
+- Business process audit and optimization
+- Website and application development
+- Monthly retainer support and monitoring
+
+## Social Proof
+- 6+ websites and 1 app built for clients
+- Proprietary WAT Framework used in production
+- Part of Stay Starving Holdings LLC ecosystem
+
+## Founder
+- **Charles "Trey" Cooper III** — AI systems architect, licensed Florida Realtor
+- BS Mechanical Engineering (NC A&T State University, Aerospace concentration)
+- MS Management (University of Florida)
+- Building AI automation systems since 2025
+
+## Contact
+- Website: https://luxcor.tech
+- Book a call: https://calendly.com/treycooper333/onboarding-meeting
+- Parent company: https://staystarving.com
+- YouTube: https://www.youtube.com/@TreyCooper.
+- X/Twitter: https://x.com/treythesavage3

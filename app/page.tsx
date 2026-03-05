@@ -1,3 +1,4 @@
+import Script from "next/script";
 import CardBeamSection from "./components/CardBeamSection";
 import MatrixBackground from "./components/MatrixBackground";
 import ScrollReveal from "./components/ScrollReveal";
@@ -5,6 +6,101 @@ import TiltCard from "./components/TiltCard";
 import ServicesTabs from "./components/ServicesTabs";
 import PortfolioCards from "./components/PortfolioCards";
 import PortfolioShowcase from "./components/PortfolioShowcase";
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": "https://luxcor.tech/#organization",
+  name: "LuxCor AI",
+  url: "https://luxcor.tech",
+  description:
+    "Custom AI automation agency building voice agents, workflow automation, and intelligent systems for growing businesses. 6+ client projects delivered. Starting at $997.",
+  founder: {
+    "@type": "Person",
+    name: "Charles Cooper III",
+    alternateName: "Trey Cooper",
+    jobTitle: "Founder & AI Systems Architect",
+  },
+  parentOrganization: {
+    "@type": "Organization",
+    name: "Stay Starving Holdings LLC",
+    url: "https://staystarving.com",
+  },
+  serviceType: "AI Automation Consulting",
+  areaServed: "Worldwide",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "AI Automation Services",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        name: "AI Workflow Audit",
+        price: "997",
+        priceCurrency: "USD",
+        description: "Comprehensive audit of business processes with automation roadmap",
+      },
+      {
+        "@type": "Offer",
+        name: "Growth Retainer",
+        price: "4500",
+        priceCurrency: "USD",
+        unitText: "MONTH",
+        description: "Ongoing AI automation development, deployment, and optimization",
+      },
+      {
+        "@type": "Offer",
+        name: "Enterprise Build",
+        price: "30000",
+        priceCurrency: "USD",
+        description: "Full-scale AI system architecture and deployment",
+      },
+    ],
+  },
+  sameAs: [
+    "https://staystarving.com/portfolio/luxcor-ai",
+    "https://x.com/treythesavage3",
+    "https://www.youtube.com/@TreyCooper.",
+  ],
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much does AI automation cost?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "LuxCor AI offers three tiers: AI Workflow Audit starting at $997, Growth Retainer at $4,500/month for ongoing automation, and Enterprise Build projects from $30,000-$50,000 for full-scale AI system deployment.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the WAT Framework?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The WAT Framework (Workflows, Agents, Tools) is LuxCor AI's proprietary architecture for building reliable AI systems. Workflows are markdown SOPs. Agents are AI decision-makers. Tools are deterministic scripts. This separation achieves near 100% execution accuracy by keeping AI focused on reasoning while code handles execution.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What AI automation services does LuxCor AI offer?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "LuxCor AI builds custom AI agents, voice agents for lead qualification and support, workflow automation using n8n and Python, business process optimization, and provides monthly retainer support. We've delivered 6+ websites and apps for clients.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Who founded LuxCor AI?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "LuxCor AI was founded by Charles 'Trey' Cooper III, a mechanical engineer (NC A&T, BS) with a Master's in Management (University of Florida). He built the WAT Framework for production-grade AI automation and runs LuxCor AI as a division of Stay Starving Holdings LLC.",
+      },
+    },
+  ],
+};
 
 const CALENDLY_URL = "https://calendly.com/treycooper333/onboarding-meeting";
 
@@ -548,6 +644,16 @@ function Footer() {
 export default function Home() {
   return (
     <>
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <Nav />
       <Hero />
       <Problem />
