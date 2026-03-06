@@ -88,7 +88,7 @@ const faqSchema = {
       name: "What AI automation services does LuxCor AI offer?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "LuxCor AI builds custom AI agents, voice agents for lead qualification and support, workflow automation using n8n and Python, business process optimization, and provides monthly retainer support. We've delivered 6+ websites and apps for clients.",
+        text: "LuxCor AI builds custom AI agents, voice agents for lead qualification and support, workflow automation using n8n and Python, business process optimization, and provides monthly retainer support. We've delivered 10+ client projects including websites, apps, and automation systems.",
       },
     },
     {
