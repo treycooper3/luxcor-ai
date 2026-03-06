@@ -14,7 +14,7 @@ const organizationSchema = {
   name: "LuxCor AI",
   url: "https://luxcor.tech",
   description:
-    "Custom AI automation agency building voice agents, workflow automation, and intelligent systems for growing businesses. 6+ client projects delivered. Starting at $997.",
+    "Custom AI automation agency building voice agents, workflow automation, and intelligent systems for growing businesses. 10+ client projects delivered. Starting at $997.",
   founder: {
     "@type": "Person",
     name: "Charles Cooper III",
