@@ -42,8 +42,7 @@ export async function GET(
     }
 
     // Set presentation properties
-    prs.defineLayout({ name: 'TITLE_SLIDE', master: 'MASTER_SLIDE' })
-    prs.defineLayout({ name: 'CONTENT_SLIDE', master: 'MASTER_SLIDE' })
+    prs.defineLayout({ name: 'MASTER_SLIDE' })
 
     // Slide 1: Cover
     let slide = prs.addSlide()
