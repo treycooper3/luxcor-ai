@@ -6,6 +6,7 @@ import TiltCard from "./components/TiltCard";
 import ServicesTabs from "./components/ServicesTabs";
 import PortfolioCards from "./components/PortfolioCards";
 import PortfolioShowcase from "./components/PortfolioShowcase";
+import ContactForm from "./components/ContactForm";
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -571,6 +572,28 @@ function Showcase() {
   );
 }
 
+function ContactFormSection() {
+  return (
+    <section className="px-6 py-20 bg-gradient-to-b from-transparent via-blue-50/10 to-transparent">
+      <ScrollReveal>
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 font-serif text-3xl font-bold md:text-4xl">
+              Not Ready to Book?
+            </h2>
+            <p className="text-lg text-muted">
+              Tell us about your project. We&apos;ll review it and reach out with next steps.
+            </p>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+            <ContactForm />
+          </div>
+        </div>
+      </ScrollReveal>
+    </section>
+  );
+}
+
 function CTAFooter() {
   return (
     <section className="hero-gradient px-6 py-24">
@@ -661,6 +684,7 @@ export default function Home() {
       <Services />
       <CaseStudies />
       <Showcase />
+      <ContactFormSection />
       <CTAFooter />
       <Footer />
     </>
