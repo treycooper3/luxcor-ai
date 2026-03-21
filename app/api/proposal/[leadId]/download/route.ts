@@ -31,10 +31,11 @@ function addSubtitle(text: string) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { leadId: string } },
+  { params }: { params: Promise<{ leadId: string }> },
 ) {
   try {
-    const lead = await getLead(params.leadId)
+    const { leadId } = await params
+    const lead = await getLead(leadId)
 
     if (!lead) {
       return new Response('Lead not found', { status: 404 })

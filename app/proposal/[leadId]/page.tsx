@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getLead } from '@/lib/notion'
 import { Lead, projectTypeLabels, budgetLabels } from '@/types'
 import Link from 'next/link'
+import { use } from 'react'
 
 const solutions = {
   voice_agent: {
@@ -85,25 +86,26 @@ const caseStudies = [
   },
 ]
 
-export default function ProposalPage({ params }: { params: { leadId: string } }) {
+export default function ProposalPage({ params }: { params: Promise<{ leadId: string }> }) {
+  const { leadId } = use(params)
   const [lead, setLead] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
     const fetchLead = async () => {
-      const data = await getLead(params.leadId)
+      const data = await getLead(leadId)
       setLead(data)
       setLoading(false)
     }
 
     fetchLead()
-  }, [params.leadId])
+  }, [leadId])
 
   const handleDownloadPPTX = async () => {
     setDownloading(true)
     try {
-      const response = await fetch(`/api/proposal/${params.leadId}/download`)
+      const response = await fetch(`/api/proposal/${leadId}/download`)
       if (!response.ok) throw new Error('Failed to generate presentation')
 
       const blob = await response.blob()
@@ -207,8 +209,8 @@ export default function ProposalPage({ params }: { params: { leadId: string } })
               <h4 className="text-lg font-semibold text-white mb-4">How it helps you:</h4>
               <ul className="space-y-2">
                 {solution.useCases.map((useCase, i) => (
-                  <li key={i} className="text-slate-300 flex gap-2">
-                    <span className="text-blue-400">→</span> {useCase}
+                  <li key={i} className="text-slate-200">
+                    • {useCase}
                   </li>
                 ))}
               </ul>
@@ -217,46 +219,19 @@ export default function ProposalPage({ params }: { params: { leadId: string } })
         </div>
       </section>
 
-      {/* Why LuxCor */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-700">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-6">Why LuxCor?</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Expert Team',
-                description: 'Years of experience shipping AI solutions at scale',
-              },
-              {
-                title: 'Fast Delivery',
-                description: 'From concept to production in weeks, not months',
-              },
-              {
-                title: 'Results Focused',
-                description: 'We measure success by your business metrics',
-              },
-            ].map((item, i) => (
-              <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                <p className="text-slate-400">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Case Studies */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-700">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-6">Recent Success Stories</h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Proven Results</h2>
+          <p className="text-slate-300 mb-8">
+            Here&apos;s what we&apos;ve delivered for other clients:
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {caseStudies.map((study, i) => (
               <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-                <p className="text-slate-400 text-sm mb-2">CLIENT</p>
-                <h3 className="text-lg font-semibold text-white mb-1">{study.client}</h3>
-                <p className="text-slate-300 text-sm mb-4">{study.project}</p>
+                <h4 className="text-lg font-bold text-white mb-2">{study.client}</h4>
+                <p className="text-slate-400 text-sm mb-3">{study.project}</p>
                 <p className="text-blue-400 font-semibold">{study.result}</p>
               </div>
             ))}
@@ -264,63 +239,89 @@ export default function ProposalPage({ params }: { params: { leadId: string } })
         </div>
       </section>
 
-      {/* Investment Section */}
+      {/* Investment */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-700">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Investment</h2>
-
-          <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-8">
-            <p className="text-slate-300 mb-4">Based on your requirements:</p>
-            <div className="text-4xl font-bold text-blue-400 mb-4">
-              {budget === 'Under $5,000'
-                ? '$3,000 - $5,000'
-                : budget === '$5,000 - $10,000'
-                  ? '$7,500 - $10,000'
-                  : budget === '$10,000 - $25,000'
-                    ? '$15,000 - $25,000'
-                    : 'Custom Quote'}
+          <div className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 p-1 rounded-lg mb-4">
+            <div className="bg-slate-900 px-12 py-8 rounded-lg">
+              <div className="text-5xl font-bold text-white mb-2">
+                {lead.budget === 'under_5k'
+                  ? '$3,000 - $5,000'
+                  : lead.budget === '5k_10k'
+                    ? '$7,500 - $10,000'
+                    : lead.budget === '10k_25k'
+                      ? '$15,000 - $25,000'
+                      : 'Custom Quote'}
+              </div>
+              <div className="text-slate-400">
+                Includes design, development, deployment, and 30 days support
+              </div>
             </div>
-            <p className="text-slate-400">
-              Includes design, development, deployment, and 30 days of post-launch support.
+          </div>
+          <p className="text-slate-300 max-w-2xl mx-auto">
+            This estimate is based on the scope described. Final pricing will be confirmed after a
+            discovery call to ensure we understand all your requirements.
+          </p>
+        </div>
+      </section>
+
+      {/* Next Steps */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">Next Steps</h2>
+
+          <div className="space-y-6 mb-12">
+            {[
+              { num: '1', text: 'Schedule a discovery call to review this proposal' },
+              { num: '2', text: 'Deep dive into your requirements and timeline' },
+              { num: '3', text: 'Finalize contract and kickoff' },
+              { num: '4', text: 'Begin development with weekly check-ins' },
+            ].map((step) => (
+              <div key={step.num} className="flex gap-4 items-start">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                  <span className="text-white font-bold">{step.num}</span>
+                </div>
+                <p className="text-lg text-slate-200 pt-1">{step.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center space-y-4">
+            <button
+              onClick={handleDownloadPPTX}
+              disabled={downloading}
+              className="inline-block bg-purple-500 hover:bg-purple-600 text-white font-semibold px-8 py-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {downloading ? 'Generating...' : 'Download as PowerPoint'}
+            </button>
+            <br />
+            <a
+              href="https://calendly.com/treycooper"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-lg transition-colors"
+            >
+              Schedule Discovery Call
+            </a>
+            <p className="text-slate-400 text-sm">
+              Questions? Email us at{' '}
+              <a href="mailto:trey@luxcor.tech" className="text-blue-400 hover:text-blue-300">
+                trey@luxcor.tech
+              </a>
             </p>
           </div>
         </div>
       </section>
 
-      {/* CTA & Download */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">Next Steps</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <button
-              onClick={handleDownloadPPTX}
-              disabled={downloading}
-              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-3 px-6 rounded-lg transition"
-            >
-              {downloading ? 'Generating...' : '📥 Download as PowerPoint'}
-            </button>
-
-            <a
-              href="https://calendly.com/treycooper"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition inline-block"
-            >
-              📅 Schedule a Discovery Call
-            </a>
-          </div>
-
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            Ready to get started? We&apos;ll dive deeper into your requirements, answer any questions, and create a
-            detailed project timeline.
+      {/* Footer */}
+      <footer className="py-8 px-4 sm:px-6 lg:px-8 border-t border-slate-700">
+        <div className="max-w-4xl mx-auto text-center text-slate-500 text-sm">
+          <p>© 2025 LuxCor AI. All rights reserved.</p>
+          <p className="mt-2">
+            This proposal is valid for 30 days from the date of generation.
           </p>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-700 py-8 px-4 text-center text-slate-500">
-        <p>© 2026 LuxCor AI. All rights reserved.</p>
       </footer>
     </div>
   )
