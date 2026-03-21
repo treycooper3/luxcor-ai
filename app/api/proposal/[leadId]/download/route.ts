@@ -2,31 +2,12 @@ import PptxGenJs from 'pptxgenjs'
 import { getLead } from '@/lib/notion'
 import { projectTypeLabels, budgetLabels } from '@/types'
 
-const prs = new PptxGenJs()
-
 const colors = {
   primary: '0062FF',
   secondary: '7C3AED',
   dark: '0F172A',
   light: 'F1F5F9',
   accent: '06B6D4',
-}
-
-function addTitle(text: string) {
-  return {
-    text,
-    fontSize: 44,
-    bold: true,
-    color: colors.light,
-  }
-}
-
-function addSubtitle(text: string) {
-  return {
-    text,
-    fontSize: 24,
-    color: 'B1BDC9',
-  }
 }
 
 export async function GET(
@@ -41,8 +22,7 @@ export async function GET(
       return new Response('Lead not found', { status: 404 })
     }
 
-    // Set presentation properties
-    prs.defineLayout({ name: 'MASTER_SLIDE' })
+    const prs = new PptxGenJs()
 
     // Slide 1: Cover
     let slide = prs.addSlide()
