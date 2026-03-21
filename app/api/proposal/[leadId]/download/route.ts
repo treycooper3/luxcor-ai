@@ -89,7 +89,10 @@ export async function GET(
       fill: { color: '1E293B' },
       line: { color: colors.primary, width: 2 },
     })
-    slide.addText(lead.message || `Implementing ${projectTypeLabels[lead.projectType as any] || 'AI solutions'}`, {
+    const projectTypeLabel = lead.projectType && lead.projectType in projectTypeLabels
+      ? projectTypeLabels[lead.projectType as keyof typeof projectTypeLabels]
+      : 'AI solutions'
+    slide.addText(lead.message || `Implementing ${projectTypeLabel}`, {
       x: 1,
       y: 2,
       w: 8,
@@ -111,7 +114,9 @@ export async function GET(
       bold: true,
       color: colors.light,
     })
-    const solutionTitle = projectTypeLabels[lead.projectType as any] || 'Custom AI Solution'
+    const solutionTitle = lead.projectType && lead.projectType in projectTypeLabels
+      ? projectTypeLabels[lead.projectType as keyof typeof projectTypeLabels]
+      : 'Custom AI Solution'
     slide.addText(solutionTitle, {
       x: 0.5,
       y: 1.4,
@@ -200,7 +205,9 @@ export async function GET(
       color: colors.light,
     })
 
-    const budgetRange = lead.budget ? budgetLabels[lead.budget as any] : 'Custom'
+    const budgetRange = lead.budget && lead.budget in budgetLabels
+      ? budgetLabels[lead.budget as keyof typeof budgetLabels]
+      : 'Custom'
     const priceText =
       lead.budget === 'under_5k'
         ? '$3,000 - $5,000'
