@@ -1,12 +1,15 @@
 import { Client } from '@notionhq/client'
 import { Lead } from '@/types'
 
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-})
+function getNotionClient() {
+  return new Client({
+    auth: process.env.NOTION_API_KEY,
+  })
+}
 
 export async function getLead(pageId: string): Promise<Lead | null> {
   try {
+    const notion = getNotionClient()
     const response = await notion.pages.retrieve({ page_id: pageId })
 
     if (!response) {
