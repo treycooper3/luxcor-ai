@@ -296,9 +296,9 @@ export async function GET(
     })
 
     // Generate PPTX and send as response
-    const pptxBlob = await prs.write({ outputType: 'blob' })
+    const pptxBuffer = await prs.write({ outputType: 'arraybuffer' }) as ArrayBuffer
 
-    return new Response(pptxBlob, {
+    return new Response(pptxBuffer, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         'Content-Disposition': `attachment; filename="${lead.company}-luxcor-proposal.pptx"`,
