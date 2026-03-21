@@ -12,7 +12,7 @@ export async function getLead(pageId: string): Promise<Lead | null> {
     const notion = getNotionClient()
     const response = await notion.pages.retrieve({ page_id: pageId })
 
-    if (!response) {
+    if (!response || !('properties' in response)) {
       return null
     }
 
