@@ -128,10 +128,13 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#" className="text-3xl font-serif font-bold tracking-[0.15em]">
-          <span className="luxury-gradient">LUXCOR</span>
-          <span className="ml-1 text-xs font-sans font-light tracking-widest text-muted">
-            AI
+        <a href="#" className="flex items-center gap-3">
+          <img src="/luxcor-icon.svg" alt="LuxCor AI" className="h-9 w-9" />
+          <span className="hidden sm:flex items-baseline gap-1">
+            <span className="text-3xl font-serif font-bold tracking-[0.15em] luxury-gradient">LUXCOR</span>
+            <span className="text-xs font-sans font-light tracking-widest text-muted">
+              AI
+            </span>
           </span>
         </a>
         <div className="hidden items-center gap-8 md:flex">
