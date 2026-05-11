@@ -4,6 +4,16 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    // Honeypot: if a bot filled the hidden website_url field, fake success
+    // without forwarding the submission.
+    if (body.website_url) {
+      return NextResponse.json({
+        success: true,
+        lead_id: "LUXCOR-" + Date.now(),
+        message: "Lead captured successfully",
+      });
+    }
+
     // Validate required fields
     if (!body.name || !body.email || !body.company) {
       return NextResponse.json(

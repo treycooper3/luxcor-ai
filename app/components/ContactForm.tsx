@@ -11,6 +11,7 @@ interface FormData {
   budget?: string;
   projectType?: string;
   message?: string;
+  website_url?: string;
 }
 
 export default function ContactForm() {
@@ -99,6 +100,7 @@ export default function ContactForm() {
           name: formData.name,
           email: formData.email,
           company: formData.company,
+          website_url: formData.website_url,
         }),
       });
 
@@ -131,7 +133,7 @@ export default function ContactForm() {
     return (
       <form onSubmit={handleDetailSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
+          <label className="block text-sm font-medium text-gray-200 mb-2">
             What's your approximate budget?
           </label>
           <select
@@ -149,7 +151,7 @@ export default function ContactForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
+          <label className="block text-sm font-medium text-gray-200 mb-2">
             What type of project are you interested in?
           </label>
           <select
@@ -167,7 +169,7 @@ export default function ContactForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
+          <label className="block text-sm font-medium text-gray-200 mb-2">
             Tell us about your project (optional)
           </label>
           <textarea
@@ -208,7 +210,7 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleInitialSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-900 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Your Name
         </label>
         <input
@@ -222,7 +224,7 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-900 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Email
         </label>
         <input
@@ -236,7 +238,7 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-900 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Company
         </label>
         <input
@@ -246,6 +248,19 @@ export default function ContactForm() {
           onChange={handleInitialChange}
           placeholder="Acme Inc."
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+
+      <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden">
+        <label htmlFor="website_url">Website (leave blank)</label>
+        <input
+          type="text"
+          id="website_url"
+          name="website_url"
+          value={formData.website_url || ""}
+          onChange={handleInitialChange}
+          tabIndex={-1}
+          autoComplete="off"
         />
       </div>
 
