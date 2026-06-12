@@ -7,6 +7,7 @@ import ServicesTabs from "./components/ServicesTabs";
 import PortfolioCards from "./components/PortfolioCards";
 import PortfolioShowcase from "./components/PortfolioShowcase";
 import ContactForm from "./components/ContactForm";
+import MobileNav from "./components/MobileNav";
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -160,19 +161,29 @@ function Nav() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
+            className="rounded-full bg-gold px-5 py-3 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
           >
             Get in Touch
           </a>
         </div>
-        <a
-          href={CALENDLY_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-gold-light md:hidden"
-        >
-          Get in Touch
-        </a>
+        <div className="flex items-center gap-2 md:hidden">
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full bg-gold px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
+          >
+            Get in Touch
+          </a>
+          <MobileNav
+            links={[
+              { href: "#services", label: "Services" },
+              { href: "#portfolio", label: "Portfolio" },
+              { href: "#our-work", label: "Our Work" },
+            ]}
+            ctaUrl={CALENDLY_URL}
+          />
+        </div>
       </div>
     </nav>
   );
@@ -186,7 +197,7 @@ function Hero() {
         <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">
           AI Solutions for Growing Businesses
         </p>
-        <h1 className="mb-6 font-serif text-5xl font-bold leading-tight tracking-tight md:text-7xl">
+        <h1 className="mb-6 font-serif text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-7xl">
           Stop Losing Revenue
           <br />
           <span className="luxury-gradient">To Manual Workflows</span>
@@ -297,7 +308,7 @@ function Problem() {
   ];
 
   return (
-    <section className="px-6 py-24">
+    <section className="px-6 py-16 md:py-24">
       <div className="mx-auto max-w-4xl text-center">
         <ScrollReveal>
           <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-accent-gold">
@@ -315,7 +326,7 @@ function Problem() {
         <div className="grid gap-6 md:grid-cols-3">
           {cards.map((item, index) => (
             <ScrollReveal key={index} delay={index * 100}>
-              <TiltCard className="glass-card-interactive rounded-2xl p-8 text-left h-full">
+              <TiltCard className="glass-card-interactive rounded-2xl p-6 md:p-8 text-left h-full">
                 <div className="mb-4 text-gold">{item.icon}</div>
                 <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
                 <p className="text-sm leading-relaxed text-muted">{item.desc}</p>
@@ -381,7 +392,7 @@ const tiers = [
 
 function Services() {
   return (
-    <section id="services" className="px-6 py-24">
+    <section id="services" className="px-6 py-16 md:py-24">
       <div className="mx-auto max-w-6xl">
         <ScrollReveal>
           <div className="mb-16 text-center">
@@ -481,7 +492,7 @@ const caseStudies = [
 
 function CaseStudies() {
   return (
-    <section id="portfolio" className="px-6 py-24">
+    <section id="portfolio" className="px-6 py-16 md:py-24">
       <div className="mx-auto max-w-6xl">
         <ScrollReveal>
           <div className="mb-16 text-center">
@@ -552,7 +563,7 @@ const showcaseItems = [
 
 function Showcase() {
   return (
-    <section id="our-work" className="px-6 py-24">
+    <section id="our-work" className="px-6 py-16 md:py-24">
       <div className="mx-auto max-w-6xl">
         <ScrollReveal>
           <div className="mb-16 text-center">
@@ -588,7 +599,7 @@ function ContactFormSection() {
               Tell us about your project. We&apos;ll review it and reach out with next steps.
             </p>
           </div>
-          <div className="rounded-lg border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+          <div className="rounded-lg border border-white/10 bg-white/5 p-6 md:p-8 backdrop-blur-sm">
             <ContactForm />
           </div>
         </div>
@@ -599,7 +610,7 @@ function ContactFormSection() {
 
 function CTAFooter() {
   return (
-    <section className="hero-gradient px-6 py-24">
+    <section className="hero-gradient px-6 py-16 md:py-24">
       <ScrollReveal>
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 font-serif text-3xl font-bold md:text-5xl">
@@ -613,7 +624,7 @@ function CTAFooter() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="cta-button inline-block rounded-full bg-gold px-10 py-4 text-lg font-semibold text-black hover:bg-gold-light"
+            className="cta-button inline-block rounded-full bg-gold px-8 md:px-10 py-3 md:py-4 text-base md:text-lg font-semibold text-black hover:bg-gold-light"
           >
             Get in Touch
           </a>

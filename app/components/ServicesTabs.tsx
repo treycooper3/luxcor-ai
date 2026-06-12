@@ -81,7 +81,7 @@ export default function ServicesTabs({
               tabRefs.current[index] = element;
             }}
             onClick={() => setActiveIndex(index)}
-            className={`relative z-10 flex-1 rounded-full px-6 py-3 text-sm font-semibold transition-colors ${
+            className={`relative z-10 flex-1 rounded-full px-3 py-3 text-sm font-semibold transition-colors sm:px-6 ${
               activeIndex === index
                 ? "text-accent-gold"
                 : "text-muted hover:text-foreground"
@@ -89,7 +89,7 @@ export default function ServicesTabs({
           >
             {tier.name}
             {tier.popular && (
-              <span className="ml-2 inline-block rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold uppercase text-black">
+              <span className="ml-2 hidden rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold uppercase text-black sm:inline-block">
                 Popular
               </span>
             )}
@@ -100,7 +100,7 @@ export default function ServicesTabs({
       {/* Content Panel */}
       <div
         key={activeIndex}
-        className="tab-content-enter glass-card-interactive mx-auto max-w-lg rounded-2xl p-8"
+        className="tab-content-enter glass-card-interactive mx-auto max-w-md rounded-2xl p-6 sm:max-w-lg sm:p-8"
       >
         {activeTier.popular && (
           <div className="mb-4 inline-block rounded-full bg-gold px-4 py-1 text-xs font-bold uppercase tracking-wider text-black">
@@ -111,7 +111,7 @@ export default function ServicesTabs({
           {activeTier.name}
         </h3>
         <div className="mb-1">
-          <span className="text-4xl font-bold luxury-gradient">
+          <span className="text-3xl font-bold luxury-gradient sm:text-4xl">
             {activeTier.price}
           </span>
         </div>

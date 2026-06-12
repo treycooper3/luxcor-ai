@@ -140,7 +140,7 @@ export default function ContactForm() {
             name="budget"
             value={formData.budget || ""}
             onChange={handleDetailsChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select a range</option>
             <option value="under_5k">Under $5,000</option>
@@ -158,7 +158,7 @@ export default function ContactForm() {
             name="projectType"
             value={formData.projectType || ""}
             onChange={handleDetailsChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Select a type</option>
             <option value="voice_agent">AI Voice Agent</option>
@@ -178,7 +178,7 @@ export default function ContactForm() {
             onChange={handleDetailsChange}
             rows={4}
             placeholder="What are you looking to build?"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
@@ -190,7 +190,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 font-medium transition"
+            className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 font-medium transition"
           >
             {isLoading ? "Sending..." : "Send My Info"}
           </button>
@@ -198,7 +198,7 @@ export default function ContactForm() {
             type="button"
             onClick={handleSkipDetails}
             disabled={isLoading}
-            className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 font-medium transition"
+            className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 font-medium transition"
           >
             Skip for Now
           </button>
@@ -219,7 +219,7 @@ export default function ContactForm() {
           value={formData.name}
           onChange={handleInitialChange}
           placeholder="John Smith"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
@@ -233,7 +233,7 @@ export default function ContactForm() {
           value={formData.email}
           onChange={handleInitialChange}
           placeholder="you@company.com"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
@@ -247,7 +247,7 @@ export default function ContactForm() {
           value={formData.company}
           onChange={handleInitialChange}
           placeholder="Acme Inc."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
@@ -270,7 +270,7 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-medium transition"
+        className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium transition"
       >
         Tell Me More →
       </button>

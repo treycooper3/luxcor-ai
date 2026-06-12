@@ -1,6 +1,7 @@
 import Script from "next/script";
 import ScrollReveal from "./ScrollReveal";
 import MatrixBackground from "./MatrixBackground";
+import MobileNav from "./MobileNav";
 
 const CALENDLY_URL = "https://calendly.com/treycooper333/onboarding-meeting";
 
@@ -67,19 +68,29 @@ function Nav() {
             href={CALENDLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
+            className="rounded-full bg-gold px-5 py-3 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
           >
             Get in Touch
           </a>
         </div>
-        <a
-          href={CALENDLY_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-gold-light md:hidden"
-        >
-          Get in Touch
-        </a>
+        <div className="flex items-center gap-2 md:hidden">
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full bg-gold px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-gold-light"
+          >
+            Get in Touch
+          </a>
+          <MobileNav
+            links={[
+              { href: "/#services", label: "Services" },
+              { href: "/#portfolio", label: "Portfolio" },
+              { href: "/#our-work", label: "Our Work" },
+            ]}
+            ctaUrl={CALENDLY_URL}
+          />
+        </div>
       </div>
     </nav>
   );
@@ -170,7 +181,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
       </section>
 
       {/* Pain Points */}
-      <section className="px-6 py-24">
+      <section className="px-6 py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
@@ -179,10 +190,10 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
               </h2>
             </div>
           </ScrollReveal>
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-6 md:gap-8 md:grid-cols-3">
             {data.painPoints.map((point, index) => (
               <ScrollReveal key={point.title} delay={index * 150}>
-                <div className="glass-card-interactive rounded-2xl p-8">
+                <div className="glass-card-interactive rounded-2xl p-6 md:p-8">
                   <h3 className="mb-3 text-xl font-bold text-foreground">
                     {point.title}
                   </h3>
@@ -198,7 +209,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
 
       {/* Service Highlights (optional) */}
       {data.serviceHighlights && (
-        <section className="border-t border-white/5 px-6 py-24">
+        <section className="border-t border-white/5 px-6 py-16 md:py-24">
           <div className="mx-auto max-w-6xl">
             <ScrollReveal>
               <div className="mx-auto mb-16 max-w-2xl text-center">
@@ -210,7 +221,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
             <div className="grid gap-6 md:grid-cols-2">
               {data.serviceHighlights.map((item, index) => (
                 <ScrollReveal key={item.title} delay={index * 100}>
-                  <div className="glass-card rounded-2xl p-8">
+                  <div className="glass-card rounded-2xl p-6 md:p-8">
                     <h3 className="mb-2 text-lg font-bold text-gold">
                       {item.title}
                     </h3>
@@ -226,7 +237,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
       )}
 
       {/* Case Studies */}
-      <section className="border-t border-white/5 px-6 py-24">
+      <section className="border-t border-white/5 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
@@ -238,10 +249,10 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
               </p>
             </div>
           </ScrollReveal>
-          <div className={`grid gap-8 ${data.caseStudies.length <= 2 ? "md:grid-cols-2 max-w-4xl mx-auto" : "md:grid-cols-2 lg:grid-cols-3"}`}>
+          <div className={`grid gap-6 md:gap-8 ${data.caseStudies.length <= 2 ? "md:grid-cols-2 max-w-4xl mx-auto" : "md:grid-cols-2 lg:grid-cols-3"}`}>
             {data.caseStudies.map((study, index) => (
               <ScrollReveal key={study.name} delay={index * 100}>
-                <div className="glass-card-interactive flex h-full flex-col rounded-2xl p-8">
+                <div className="glass-card-interactive flex h-full flex-col rounded-2xl p-6 md:p-8">
                   <p className="mb-2 text-sm font-medium text-gold">
                     {study.tagline}
                   </p>
@@ -278,7 +289,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
       </section>
 
       {/* Pricing Summary */}
-      <section className="border-t border-white/5 px-6 py-24">
+      <section className="border-t border-white/5 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <div className="mx-auto mb-16 max-w-2xl text-center">
@@ -288,9 +299,9 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
               </h2>
             </div>
           </ScrollReveal>
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-6 md:gap-8 md:grid-cols-3">
             <ScrollReveal>
-              <div className="glass-card rounded-2xl p-8 text-center">
+              <div className="glass-card rounded-2xl p-6 md:p-8 text-center">
                 <h3 className="mb-2 text-lg font-bold text-foreground">
                   Starter
                 </h3>
@@ -302,7 +313,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
               </div>
             </ScrollReveal>
             <ScrollReveal delay={150}>
-              <div className="glass-card popular-glow rounded-2xl p-8 text-center">
+              <div className="glass-card popular-glow rounded-2xl p-6 md:p-8 text-center">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-gold">
                   Most Popular
                 </p>
@@ -317,7 +328,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
               </div>
             </ScrollReveal>
             <ScrollReveal delay={300}>
-              <div className="glass-card rounded-2xl p-8 text-center">
+              <div className="glass-card rounded-2xl p-6 md:p-8 text-center">
                 <h3 className="mb-2 text-lg font-bold text-foreground">
                   Enterprise
                 </h3>
@@ -333,7 +344,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
       </section>
 
       {/* FAQ */}
-      <section className="border-t border-white/5 px-6 py-24">
+      <section className="border-t border-white/5 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-3xl">
           <ScrollReveal>
             <div className="mb-16 text-center">
@@ -359,7 +370,7 @@ export default function SEOLandingPage({ data }: { data: SEOPageData }) {
       </section>
 
       {/* CTA Footer */}
-      <section className="hero-gradient px-6 py-24">
+      <section className="hero-gradient px-6 py-16 md:py-24">
         <ScrollReveal>
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="mb-4 font-serif text-3xl font-bold md:text-5xl">

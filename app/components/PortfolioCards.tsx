@@ -196,7 +196,7 @@ export default function PortfolioCards({
   calendlyUrl: string;
 }) {
   return (
-    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
       {caseStudies.map((study, index) => (
         <FlipCard key={index} study={study} calendlyUrl={calendlyUrl} />
       ))}
